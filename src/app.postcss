@@ -3,6 +3,14 @@
 @tailwind utilities;
 @tailwind variants;
 
+@layer utilities {
+	.required:after {
+		content: ' *';
+		color: red;
+		font-weight: bold;
+	}
+}
+
 html,
 body {
 	@apply h-full overflow-hidden;

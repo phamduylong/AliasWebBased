@@ -15,7 +15,6 @@ export async function load({ params }) {
 			data.push({ word: currWord, isshown: false });
 		});
 	});
-	console.log(data);
 
 	return { words: data };
 }

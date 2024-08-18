@@ -85,15 +85,6 @@
 	class="card relative top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center w-4/5 lg:w-1/3 p-4 lg:p-10 lg:m-0"
 >
 	<label class="label my-2 w-full">
-		<span class="required">Game code</span>
-		<input
-			type="text"
-			class="input"
-			placeholder="Game code to share the game"
-			bind:value={gameCode}
-		/>
-	</label>
-	<label class="label my-2 w-full">
 		<span class="required">Team 1</span>
 		<input type="text" class="input" placeholder="Name of team 1" bind:value={team1} required />
 	</label>

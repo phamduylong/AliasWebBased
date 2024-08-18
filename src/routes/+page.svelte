@@ -3,7 +3,9 @@
 	let gameCode = '';
 	$: gameCodeEmpty = gameCode === '';
 </script>
-
+<svelte:head>
+	<title>Alias Web Game</title>
+</svelte:head>
 <div
 	class="card card-hover relative top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center w-3/4 lg:w-1/4 p-4 lg:p-10 my-10 lg:m-0"
 >

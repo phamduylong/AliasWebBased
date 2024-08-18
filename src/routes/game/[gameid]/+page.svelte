@@ -92,7 +92,16 @@
 						// end of 1 turn, shuffle so the last shown word is not shown again
 						clearInterval(timerInterval);
 						shuffleArray(words);
-						currWord = words.filter((word) => !word.shown)[0];
+						const unusedWords = words.filter((word) => !word.shown);
+						if(unusedWords.length) currWord = unusedWords[0];
+						else {
+							const t = {
+								message: 'The game ran out of words. Please create a new session to play again.',
+								timeout: 4000,
+								background: 'variant-filled-error'
+							};
+							toastStore.trigger(t);
+						}
 						gameStarted = false;
 						team1Turn = !team1Turn;
 					}
@@ -113,9 +122,9 @@
 			>
 			<h1 class="h1 my-10"><b>{currWord ? currWord.word : ''}</b></h1>
 			<div class="inline my-10">
-				<button class="btn btn-sm variant-filled mx-4" on:click={() => nextWord(false)}>Skip word</button
-				><button class="btn btn-sm variant-filled mx-4" on:click={() => nextWord(true)}
-					>Next word</button
+				<button class="btn btn-sm variant-filled mx-4 !bg-red-700 !text-white" on:click={() => nextWord(false)}><strong>Skip word</strong></button
+				><button class="btn btn-sm variant-filled mx-4 !bg-green-700 !text-white" on:click={() => nextWord(true)}
+					><strong>Next word</strong></button
 				>
 			</div>
 		</div>

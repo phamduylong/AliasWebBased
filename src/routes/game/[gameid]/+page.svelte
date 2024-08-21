@@ -2,16 +2,19 @@
 	import shuffleArray from '$lib/helpers/common';
 	import { ProgressRadial, getToastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
+	import { afterUpdate } from 'svelte';
+	import type { W } from 'vitest/dist/reporters-P7C2ytIv.js';
 	/** @type {import('./$types').PageData} */
 
 	// REGION: Variables
 	export let data;
-	const words: Word[] = data.words;
-	let currWord = words[0];
+	let words: Word[];
+	let currWord: Word;
 	let gameStarted: boolean = false;
 	let timer: number = 60;
-	let team1Score : number = 0, team2Score : number = 0;
-	let team1Turn : boolean = true;
+	let team1Score: number = 0,
+		team2Score: number = 0;
+	let team1Turn: boolean = true;
 	const toastStore = getToastStore();
 
 	// REGION: Functions
@@ -32,16 +35,16 @@
 			timer = 60;
 		}
 		// current word was guessed
-		if(guessed) {
-			if(team1Turn) {
+		if (guessed) {
+			if (team1Turn) {
 				team1Score++;
 			} else {
 				team2Score++;
 			}
-		} 
+		}
 		// current word was skipped
 		else {
-			if(team1Turn && team1Score > 0) {
+			if (team1Turn && team1Score > 0) {
 				team1Score--;
 			}
 			if (!team1Turn && team2Score > 0) {
@@ -69,6 +72,11 @@
 			return 'stroke-red-800/60';
 		}
 	};
+
+	afterUpdate(() => {
+		words = data.words;
+		currWord = words[0];
+	});
 </script>
 <svelte:head>
 	<title>Guess the word</title>
@@ -76,7 +84,7 @@
 <main>
 	{#if !gameStarted}
 		<h1 class="h1 my-10 absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2">
-			<b>Team {team1Turn ? "1" : "2"}</b>
+			<b>Team {team1Turn ? '1' : '2'}</b>
 		</h1>
 		<h3 class="h3 my-10 absolute top-[35%] left-1/2 -translate-x-1/2 -translate-y-1/2">
 			<b>Current score: {team1Turn ? team1Score : team2Score}</b>
@@ -84,6 +92,16 @@
 		<button
 			class="btn variant-filled top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 absolute"
 			on:click={() => {
+				if (!words || words.length === 0) {
+					const t = {
+						message: 'Failed to load words from server.',
+						timeout: 4000,
+						background: 'variant-filled-error'
+					};
+					toastStore.trigger(t);
+					return;
+				}
+				currWord = words[0];
 				gameStarted = true;
 				timer = 60;
 				timerInterval = setInterval(() => {
@@ -93,7 +111,7 @@
 						clearInterval(timerInterval);
 						shuffleArray(words);
 						const unusedWords = words.filter((word) => !word.shown);
-						if(unusedWords.length) currWord = unusedWords[0];
+						if (unusedWords.length) currWord = unusedWords[0];
 						else {
 							const t = {
 								message: 'The game ran out of words. Please create a new session to play again.',
@@ -122,9 +140,12 @@
 			>
 			<h1 class="h1 my-10"><b>{currWord ? currWord.word : ''}</b></h1>
 			<div class="inline my-10">
-				<button class="btn btn-sm variant-filled mx-4 !bg-red-700 !text-white" on:click={() => nextWord(false)}><strong>Skip word</strong></button
-				><button class="btn btn-sm variant-filled mx-4 !bg-green-700 !text-white" on:click={() => nextWord(true)}
-					><strong>Next word</strong></button
+				<button
+					class="btn btn-sm variant-filled mx-4 !bg-red-700 !text-white"
+					on:click={() => nextWord(false)}><strong>Skip word</strong></button
+				><button
+					class="btn btn-sm variant-filled mx-4 !bg-green-700 !text-white"
+					on:click={() => nextWord(true)}><strong>Next word</strong></button
 				>
 			</div>
 		</div>

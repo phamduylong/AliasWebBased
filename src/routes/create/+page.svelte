@@ -98,6 +98,6 @@
 	</label>
 
 	<a href="/create" data-sveltekit-preload-data="hover" class="w-1/2 lg:w-1/4 mt-6 lg:mt-10"
-		><button class="btn variant-filled w-full" disabled={!allFieldsFilled}>Create game</button></a
+		><button class="btn variant-filled w-full" disabled={!allFieldsFilled} on:submit={(e) => onSubmit(e)}>Create game</button></a
 	>
 </div>

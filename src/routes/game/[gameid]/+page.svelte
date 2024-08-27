@@ -2,18 +2,18 @@
 	import shuffleArray from '$lib/helpers/common';
 	import { ProgressRadial, getToastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
-	import { afterUpdate } from 'svelte';
-	import type { W } from 'vitest/dist/reporters-P7C2ytIv.js';
+	import type { Word } from '../../../app';
 	/** @type {import('./$types').PageData} */
 
 	// REGION: Variables
 	export let data;
-	let words: Word[];
-	let currWord: Word;
+	let words: Word[] = data.words;
+	let currWord: Word = data.words[0];
 	let gameStarted: boolean = false;
 	let timer: number = 60;
-	let team1Score: number = 0,
-		team2Score: number = 0;
+	let team1: string = data.team1, team2: string = data.team2;
+	let team1Score: number = data.team1_score,
+		team2Score: number = data.team2_score;
 	let team1Turn: boolean = true;
 	const toastStore = getToastStore();
 
@@ -72,11 +72,6 @@
 			return 'stroke-red-800/60';
 		}
 	};
-
-	afterUpdate(() => {
-		words = data.words;
-		currWord = words[0];
-	});
 </script>
 <svelte:head>
 	<title>Guess the word</title>
@@ -84,10 +79,10 @@
 <main>
 	{#if !gameStarted}
 		<h1 class="h1 my-10 absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2">
-			<b>Team {team1Turn ? '1' : '2'}</b>
+			<b class="select-none">Team {team1Turn ? team1 : team2}</b>
 		</h1>
-		<h3 class="h3 my-10 absolute top-[35%] left-1/2 -translate-x-1/2 -translate-y-1/2">
-			<b>Current score: {team1Turn ? team1Score : team2Score}</b>
+		<h3 class="select-none h3 my-10 absolute top-[35%] left-1/2 -translate-x-1/2 -translate-y-1/2">
+			<b class="select-none">Current score: {team1Turn ? team1Score : team2Score}</b>
 		</h3>
 		<button
 			class="btn variant-filled top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 absolute"

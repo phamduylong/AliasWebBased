@@ -1,10 +1,17 @@
 <script lang="ts">
-	import { FileButton, getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
+	import { getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
+	import type { ActionData, PageData } from './$types';
 	// @ts-nocheck
 	let gameCode: string, team1: string, team2: string;
 	let files: FileList;
+	let words: string;
 	const toastStore = getToastStore();
-	const onFileUpload = (e: Event): void => {
+
+	/**
+	 * Bit of a dirty hack to get the words into a hidden input field and into the form data to send to the server.
+	 * @param e
+	 */
+	const onFileUpload = async (e: Event): Promise<void> => {
 		const files = (e.target as HTMLInputElement).files;
 		if (files) {
 			if (files.length > 1) {
@@ -27,53 +34,48 @@
 				toastStore.trigger(t);
 				return;
 			}
-			const wordFile = parseCSV(files[0]);
-			console.log(wordFile);
+			const wordFile = await parseCSV(files[0]);
+			words = JSON.stringify(wordFile);
 		}
-	}
-	$: allFieldsFilled = gameCode !== "" && team1 !== "" && team2 !== "" && files?.length === 1;
-
-	const onSubmit = (e: Event) : void => {
-		e.preventDefault();
-		const wordFile = parseCSV(files[0]);
-		console.log(wordFile);
-		const data = {
-			code: gameCode,
-			team1: team1,
-			team2: team2,
-			file: files[0]
-		};
-
 	};
+	$: allFieldsFilled = gameCode !== '' && team1 !== '' && team2 !== '' && files?.length === 1;
 
-	const parseCSV = (file: File): string[] => {
-		const reader = new FileReader();
-		reader.readAsText(file);
-		reader.onload = () => {
-			const text = reader.result as string;
-			if (!text) {
-				const t: ToastSettings = {
-					message: 'The file is empty.',
-					timeout: 3000,
-					background: 'variant-filled-error'
-				};
-				toastStore.trigger(t);
-				return [];
-			}
-			const lines = text.split('\n');
-			const words: string[] = [];
-			lines.forEach((line) => {
-				if(line !== "") {
-					const wordsInLine = line.split(';');
-					wordsInLine.forEach((word) => {
-						words.push(word.replace('\r', ''));
-					});
+	export let form: ActionData;
+	export let data: PageData;
+
+	/**
+	 * Parse the CSV file and return the words in an array.
+	 * This function is asynchronous because it reads the file.
+	 * @param file
+	 */
+	const parseCSV = async (file: File): Promise<string[]> => {
+		return new Promise<string[]>((resolve, reject) => {
+			const reader = new FileReader();
+			reader.readAsText(file, 'latin1');
+			reader.onload = () => {
+				const text = reader.result as string;
+				if (!text) {
+					const t: ToastSettings = {
+						message: 'The file is empty.',
+						timeout: 3000,
+						background: 'variant-filled-error'
+					};
+					toastStore.trigger(t);
+					reject();
 				}
-			});
-			console.log(words);
-			return words;
-		};
-		return [];
+				const lines = text.split('\n');
+				const words: string[] = [];
+				lines.forEach((line) => {
+					if (line !== '') {
+						const wordsInLine = line.split(';');
+						wordsInLine.forEach((word) => {
+							words.push(word.replace('\r', ''));
+						});
+					}
+				});
+				resolve(words);
+			};
+		});
 	};
 </script>
 
@@ -81,23 +83,44 @@
 	<title>Create a new game</title>
 </svelte:head>
 <h1 class="h1 text-center"><b>Create a new game</b></h1>
-<div
+<form
 	class="card relative top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center w-4/5 lg:w-1/3 p-4 lg:p-10 lg:m-0"
+	method="POST"
 >
 	<label class="label my-2 w-full">
 		<span class="required">Team 1</span>
-		<input type="text" class="input" placeholder="Name of team 1" bind:value={team1} required />
+		<input
+			type="text"
+			class="input"
+			placeholder="Name of team 1"
+			bind:value={team1}
+			name="team-1"
+			required
+		/>
 	</label>
 	<label class="label my-2 w-full">
 		<span class="required">Team 2</span>
-		<input type="text" class="input" placeholder="Name of team 2" bind:value={team2} required/>
+		<input
+			type="text"
+			class="input"
+			placeholder="Name of team 2"
+			bind:value={team2}
+			name="team-2"
+			required
+		/>
 	</label>
 	<label class="label my-2 w-full">
 		<span class="required">File of words</span>
-		<input class="input" type="file" bind:files on:change={onFileUpload} required/>
+		<input class="input" type="file" bind:files on:change={onFileUpload} required />
 	</label>
 
-	<a href="/create" data-sveltekit-preload-data="hover" class="w-1/2 lg:w-1/4 mt-6 lg:mt-10"
-		><button class="btn variant-filled w-full" disabled={!allFieldsFilled} on:submit={(e) => onSubmit(e)}>Create game</button></a
+	<!-- A hack to get words to form data -->
+	<input type="hidden" bind:value={words} name="words" required/>
+
+	<button
+		type="submit"
+		class="btn variant-filled w-1/2 lg:w-1/4 mt-6 lg:mt-10"
+		data-sveltekit-preload-data="hover"
+		disabled={!allFieldsFilled}>Create game</button
 	>
-</div>
+</form>

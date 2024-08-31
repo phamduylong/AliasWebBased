@@ -27,7 +27,7 @@
 			const fileExt = file.name.split('.').pop();
 			if (fileExt !== 'csv') {
 				const t: ToastSettings = {
-					message: `Only csv files are allowed. You uploaded a .${fileExt} file.`,
+					message: `Only .csv files are allowed. You uploaded a .${fileExt} file.`,
 					timeout: 4000,
 					background: 'variant-filled-error'
 				};
@@ -38,7 +38,7 @@
 			words = JSON.stringify(wordFile);
 		}
 	};
-	$: allFieldsFilled = gameCode !== '' && team1 !== '' && team2 !== '' && files?.length === 1;
+	$: allFieldsFilled = gameCode !== '' && team1 !== '' && team2 !== '' && files?.length === 1 && files[0].name.endsWith('.csv');
 
 	export let form: ActionData;
 	export let data: PageData;

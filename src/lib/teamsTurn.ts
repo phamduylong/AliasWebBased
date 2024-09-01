@@ -5,8 +5,8 @@ function init() {
 
     return {
         subscribe,
-        switchToTeam1: () : void => { set(true); console.log("LOL") },
-        switchToTeam2: () : void => { set(false); console.log("LOL2")}
+        switchToTeam1: () : void => set(true),
+        switchToTeam2: () : void => set(false)
     }
 }
 const team1Turn = init();

@@ -12,7 +12,12 @@ export function shuffleArray(array: any[]): void {
 	}
 }
 
-export function validateGame(game: Game) {
+/**
+ * Check if a Game object is in a valid state
+ * @param {Game} game Game object to be validated
+ * @returns {string[]} An array of error messages (if any)
+ */
+export function validateGame(game: Game): string[] {
 	const erroneousMessages = [];
 	if (!game) {
 		erroneousMessages.push('Game is null');

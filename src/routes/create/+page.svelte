@@ -38,7 +38,12 @@
 			words = JSON.stringify(wordFile);
 		}
 	};
-	$: allFieldsFilled = gameCode !== '' && team1 !== '' && team2 !== '' && files?.length === 1 && files[0].name.endsWith('.csv');
+	$: allFieldsFilled =
+		gameCode !== '' &&
+		team1 !== '' &&
+		team2 !== '' &&
+		files?.length === 1 &&
+		files[0].name.endsWith('.csv');
 
 	export let form: ActionData;
 	export let data: PageData;
@@ -115,7 +120,7 @@
 	</label>
 
 	<!-- A hack to get words to form data -->
-	<input type="hidden" bind:value={words} name="words" required/>
+	<input type="hidden" bind:value={words} name="words" required />
 
 	<button
 		type="submit"

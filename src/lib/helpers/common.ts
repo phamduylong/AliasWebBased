@@ -1,4 +1,4 @@
-import type { Game } from "$lib/types";
+import type { Game } from '$lib/types';
 
 /**
  * Shuffles the array passed to it
@@ -15,33 +15,33 @@ export function shuffleArray(array: any[]): void {
 export function validateGame(game: Game) {
 	const erroneousMessages = [];
 	if (!game) {
-		erroneousMessages.push("Game is null");
+		erroneousMessages.push('Game is null');
 	}
 
-	if (!game.game_id || typeof game.game_id !== "string" || game.game_id === "") {
-		erroneousMessages.push("Game ID is invalid");
+	if (!game.game_id || typeof game.game_id !== 'string' || game.game_id === '') {
+		erroneousMessages.push('Game ID is invalid');
 	}
 
-	if (!game.team1 || typeof game.team1 !== "string" || game.team1 === "") {
-		erroneousMessages.push("Name of team 1 is invalid");
+	if (!game.team1 || typeof game.team1 !== 'string' || game.team1 === '') {
+		erroneousMessages.push('Name of team 1 is invalid');
 	}
 
-	if (!game.team2 || typeof game.team2 !== "string" || game.team2 === "") {
-		erroneousMessages.push("Name of team 2 is invalid");
+	if (!game.team2 || typeof game.team2 !== 'string' || game.team2 === '') {
+		erroneousMessages.push('Name of team 2 is invalid');
 	}
 
-	if (typeof game.team1_score !== "number" || game.team1_score < 0) {
-		erroneousMessages.push("Score of team 1 is invalid");
+	if (typeof game.team1_score !== 'number' || game.team1_score < 0) {
+		erroneousMessages.push('Score of team 1 is invalid');
 	}
 
-	if (typeof game.team2_score !== "number" || game.team2_score < 0) {
-		erroneousMessages.push("Score of team 2 is invalid");
+	if (typeof game.team2_score !== 'number' || game.team2_score < 0) {
+		erroneousMessages.push('Score of team 2 is invalid');
 	}
 
 	if (!game.words || game.words.length === 0) {
-		erroneousMessages.push("Words array is empty");
+		erroneousMessages.push('Words array is empty');
 	}
-	
+
 	return erroneousMessages;
 }
 

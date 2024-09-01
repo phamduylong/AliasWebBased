@@ -3,8 +3,8 @@
 	import { ProgressRadial, getToastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import type { Game, Word } from '$lib/types';
-	import { page } from "$app/stores";
-	import { team1Turn } from "$lib/teamsTurn";
+	import { page } from '$app/stores';
+	import { team1Turn } from '$lib/teamsTurn';
 	/** @type {import('./$types').PageData} */
 
 	// REGION: Variables
@@ -13,7 +13,8 @@
 	let currWord: Word = data.words[0];
 	let gameStarted: boolean = false;
 	let timer: number = 60;
-	let team1: string = data.team1, team2: string = data.team2;
+	let team1: string = data.team1,
+		team2: string = data.team2;
 	let team1Score: number = data.team1_score,
 		team2Score: number = data.team2_score;
 	const toastStore = getToastStore();
@@ -54,15 +55,15 @@
 		}
 	};
 
-	const updateToDatabase : Function = () : void => {
-		const currState : Game = {
-				game_id: $page.params.gameid,
-				team1: team1,
-				team2: team2,
-				team1_score: team1Score,
-				team2_score: team2Score,
-				words: words
-			}
+	const updateToDatabase: Function = (): void => {
+		const currState: Game = {
+			game_id: $page.params.gameid,
+			team1: team1,
+			team2: team2,
+			team1_score: team1Score,
+			team2_score: team2Score,
+			words: words
+		};
 		fetch(`${$page.params.gameid}/`, {
 			method: 'POST',
 			headers: {
@@ -70,7 +71,7 @@
 			},
 			body: JSON.stringify(currState)
 		});
-	}
+	};
 
 	// REGION: Reactive variables
 	$: meter = () => {
@@ -92,6 +93,7 @@
 		}
 	};
 </script>
+
 <svelte:head>
 	<title>Guess the word</title>
 </svelte:head>

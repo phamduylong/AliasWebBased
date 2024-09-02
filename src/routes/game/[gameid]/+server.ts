@@ -1,15 +1,27 @@
-import { redirect, error } from "@sveltejs/kit";
-import type { RequestHandler } from "./$types";
+import { error, redirect } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
+import type { Game } from '$lib/types';
+import { ClientResponseError } from 'pocketbase';
+import { validateGame } from '$lib/helpers/common';
 export const POST: RequestHandler = async ({ locals, request }) => {
-    try {
-        const gamesCollection = locals.pocketBase.collection("games");
-        const currentGame = await gamesCollection.getListFirstItem({game_id: request.params.gameid});
-        const game = await request.json();
-        if (!currentGame) {
-            throw error(404, "Game not found");
-        }
-
-    } catch(e) {
-        throw e
-    }
-}
+	const gamesCollection = locals.pocketBase.collection('games');
+	const game: Game = await request.json();
+	try {
+		const currGame = await gamesCollection.getFirstListItem(`game_id="${game.game_id}"`);
+		currGame.words = game.words;
+		currGame.team1_score = game.team1_score;
+		currGame.team2_score = game.team2_score;
+		currGame.is_team1_turn = game.is_team1_turn;
+		const errors = validateGame(currGame);
+		if (errors.length !== 0) {
+			throw error(400, errors.join(', '));
+		}
+		gamesCollection.update<Game>(currGame.id, currGame);
+	} catch (err) {
+		if (err instanceof ClientResponseError) {
+			throw error(err.status, err.message);
+		}
+		throw err;
+	}
+	redirect(303, `/game/${game.game_id}`);
+};

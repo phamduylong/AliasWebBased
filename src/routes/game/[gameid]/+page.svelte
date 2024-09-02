@@ -1,20 +1,23 @@
 <script lang="ts">
-	import shuffleArray from '$lib/helpers/common';
+	import { shuffleArray } from '$lib/helpers/common';
 	import { ProgressRadial, getToastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
-	import type { Word } from '../../../app';
+	import type { Game, Word } from '$lib/types';
+	import { page } from '$app/stores';
+	import { teamTurn } from '$lib/teamsTurn';
 	/** @type {import('./$types').PageData} */
 
 	// REGION: Variables
-	export let data;
+	export let data : Game;
+	data.is_team1_turn ? teamTurn.switchToTeam1() : teamTurn.switchToTeam2();
 	let words: Word[] = data.words;
 	let currWord: Word = data.words[0];
 	let gameStarted: boolean = false;
 	let timer: number = 60;
-	let team1: string = data.team1, team2: string = data.team2;
+	let team1: string = data.team1,
+		team2: string = data.team2;
 	let team1Score: number = data.team1_score,
 		team2Score: number = data.team2_score;
-	let team1Turn: boolean = true;
 	const toastStore = getToastStore();
 
 	// REGION: Functions
@@ -36,7 +39,7 @@
 		}
 		// current word was guessed
 		if (guessed) {
-			if (team1Turn) {
+			if ($teamTurn) {
 				team1Score++;
 			} else {
 				team2Score++;
@@ -44,13 +47,32 @@
 		}
 		// current word was skipped
 		else {
-			if (team1Turn && team1Score > 0) {
+			if ($teamTurn && team1Score > 0) {
 				team1Score--;
 			}
-			if (!team1Turn && team2Score > 0) {
+			if (!$teamTurn && team2Score > 0) {
 				team2Score--;
 			}
 		}
+	};
+
+	const updateToDatabase: Function = (): void => {
+		const currState: Game = {
+			game_id: $page.params.gameid,
+			team1: team1,
+			team2: team2,
+			team1_score: team1Score,
+			team2_score: team2Score,
+			words: words,
+			is_team1_turn: $teamTurn
+		};
+		fetch(`${$page.params.gameid}/`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(currState)
+		});
 	};
 
 	// REGION: Reactive variables
@@ -73,16 +95,17 @@
 		}
 	};
 </script>
+
 <svelte:head>
 	<title>Guess the word</title>
 </svelte:head>
 <main>
 	{#if !gameStarted}
 		<h1 class="h1 my-10 absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2">
-			<b class="select-none">Team {team1Turn ? team1 : team2}</b>
+			<b class="select-none">Team {$teamTurn ? team1 : team2}</b>
 		</h1>
 		<h3 class="select-none h3 my-10 absolute top-[35%] left-1/2 -translate-x-1/2 -translate-y-1/2">
-			<b class="select-none">Current score: {team1Turn ? team1Score : team2Score}</b>
+			<b class="select-none">Current score: {$teamTurn ? team1Score : team2Score}</b>
 		</h3>
 		<button
 			class="btn variant-filled top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 absolute"
@@ -116,14 +139,19 @@
 							toastStore.trigger(t);
 						}
 						gameStarted = false;
-						team1Turn = !team1Turn;
+						if ($teamTurn) {
+							teamTurn.switchToTeam2();
+						} else {
+							teamTurn.switchToTeam1();
+						}
+						updateToDatabase();
 					}
 				}, 1000);
 			}}>Start turn</button
 		>
 	{:else}
 		<h3 class="h3 my-10 absolute top-[15%] left-1/2 -translate-x-1/2 -translate-y-1/2">
-			<b>Current score: {team1Turn ? team1Score : team2Score}</b>
+			<b>Current score: {$teamTurn ? team1Score : team2Score}</b>
 		</h3>
 		<div class="my-20 flex justify-center items-center flex-col">
 			<ProgressRadial

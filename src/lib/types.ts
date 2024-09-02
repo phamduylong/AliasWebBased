@@ -10,4 +10,6 @@ export type Game = {
 	team1_score: number;
 	team2_score: number;
 	words: Word[];
+	is_team1_turn: boolean;
 };
+

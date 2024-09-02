@@ -9,5 +9,5 @@ function init() {
 		switchToTeam2: (): void => set(false)
 	};
 }
-const team1Turn = init();
-export { team1Turn };
+const teamTurn = init();
+export { teamTurn };

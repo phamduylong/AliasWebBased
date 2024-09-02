@@ -11,6 +11,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		currGame.words = game.words;
 		currGame.team1_score = game.team1_score;
 		currGame.team2_score = game.team2_score;
+		currGame.is_team1_turn = game.is_team1_turn;
 		const errors = validateGame(currGame);
 		if (errors.length !== 0) {
 			throw error(400, errors.join(', '));

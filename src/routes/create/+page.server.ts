@@ -2,7 +2,6 @@ import { redirect, error } from '@sveltejs/kit';
 import { randomUUID } from 'crypto';
 import type { Game } from '$lib/types';
 import { validateGame } from '$lib/helpers/common';
-import { teamTurn } from '$lib/teamsTurn.js';
 export const actions = {
 	default: async ({ locals, request }) => {
 		const gameId = randomUUID();

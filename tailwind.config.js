@@ -22,6 +22,18 @@ export default {
 					{
 						name: 'crimson',
 						enhancements: true
+					},
+					{
+						name: 'wintry',
+						enhancements: true
+					},
+					{
+						name: 'skeleton',
+						enhancements: true
+					},
+					{
+						name: 'modern',
+						enhancements: true
 					}
 				]
 			}

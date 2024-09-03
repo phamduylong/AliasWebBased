@@ -3,6 +3,7 @@
 	let gameCode = '';
 	$: gameCodeEmpty = gameCode === '';
 </script>
+
 <svelte:head>
 	<title>Alias Web Game</title>
 </svelte:head>

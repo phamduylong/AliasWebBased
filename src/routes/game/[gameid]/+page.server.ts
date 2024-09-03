@@ -1,18 +1,17 @@
 import { error } from '@sveltejs/kit';
-import { EOL } from 'node:os'  
-import * as fs from 'fs';
-import * as path from 'path';
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ }) {
-    const data: Word[] = [];
-    try {
-        const content = fs.promises.readFile(new URL('../../../../static/words_version6.csv', import.meta.url), 'latin1');
-        const lines = (await content).toString().split(EOL);
-        for(const element of lines) { 
-            data.push({ word: element, shown: false });
-        }
-    } catch (e : Error) {
-        throw error(500, e.message);
-    }
-	return { words: data };
-}
+import type { PageServerLoad } from './$types';
+import type { Game } from '$lib/types';
+import { ClientResponseError } from 'pocketbase';
+export const load = (async ({ locals, params }) => {
+	try {
+		const gameId = params.gameid;
+		const gamesCollection = locals.pocketBase.collection('games');
+		const gameData : Game = await gamesCollection.getFirstListItem(`game_id="${gameId}"`);
+		return gameData;
+	} catch (err) {
+		if (err instanceof ClientResponseError) {
+			throw error(err.status, err.message);
+		}
+		throw err;
+	}
+}) satisfies PageServerLoad;

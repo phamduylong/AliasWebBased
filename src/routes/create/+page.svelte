@@ -89,7 +89,7 @@
 </svelte:head>
 <h1 class="h1 text-center"><b>Create a new game</b></h1>
 <form
-	class="card relative top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center w-4/5 lg:w-1/3 p-4 lg:p-10 lg:m-0"
+	class="card relative top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center w-4/5 md:w-1/3 p-4 md:p-10 md:m-0"
 	method="POST"
 >
 	<label class="label my-2 w-full">

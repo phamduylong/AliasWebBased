@@ -1,8 +1,8 @@
 import { pb } from '$lib/pocketbase';
 import PocketBase from 'pocketbase';
-
+import { POCKETBASE_URL } from '$env/static/private';
 export const handle = async ({ event, resolve }) => {
-	event.locals.pocketBase = new PocketBase('http://127.0.0.1:8090');
+	event.locals.pocketBase = new PocketBase(POCKETBASE_URL);
 
 	pb.set(event.locals.pocketBase);
 

@@ -1,4 +1,4 @@
-import { error, redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import type { Game } from '$lib/types';
 import { ClientResponseError } from 'pocketbase';
@@ -12,7 +12,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		currGame.team1_score = game.team1_score;
 		currGame.team2_score = game.team2_score;
 		currGame.is_team1_turn = game.is_team1_turn;
-		const errors = validateGame(currGame);
+		const errors = validateGame(currGame as unknown as Game);
 		if (errors.length !== 0) {
 			throw error(400, errors.join(', '));
 		}
@@ -23,5 +23,5 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		}
 		throw err;
 	}
-	redirect(303, `/game/${game.game_id}`);
+	return new Response('OK', { status: 200 });
 };

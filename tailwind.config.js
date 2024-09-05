@@ -20,7 +20,7 @@ export default {
 			themes: {
 				preset: [
 					{
-						name: 'crimson',
+						name: 'skeleton',
 						enhancements: true
 					},
 					{
@@ -28,11 +28,35 @@ export default {
 						enhancements: true
 					},
 					{
-						name: 'skeleton',
+						name: 'modern',
 						enhancements: true
 					},
 					{
-						name: 'modern',
+						name: 'rocket',
+						enhancements: true
+					},
+					{
+						name: 'seafoam',
+						enhancements: true
+					},
+					{
+						name: 'vintage',
+						enhancements: true
+					},
+					{
+						name: 'sahara',
+						enhancements: true
+					},
+					{
+						name: 'hamlindigo',
+						enhancements: true
+					},
+					{
+						name: 'gold-nouveau',
+						enhancements: true
+					},
+					{
+						name: 'crimson',
 						enhancements: true
 					}
 				]

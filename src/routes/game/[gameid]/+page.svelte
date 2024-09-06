@@ -6,7 +6,6 @@
 	import { page } from '$app/stores';
 	import { teamTurn } from '$lib/teamsTurn';
 	import type { MouseEventHandler } from 'svelte/elements';
-	import type { Target } from 'lucide-svelte';
 	/** @type {import('./$types').PageData} */
 
 	// REGION: Variables

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 	import type { ActionData, PageData } from './$types';
-	// @ts-nocheck
 	let gameCode: string, team1: string, team2: string;
 	let files: FileList;
 	let words: string;
@@ -87,9 +86,9 @@
 <svelte:head>
 	<title>Create a new game</title>
 </svelte:head>
-<h1 class="h1 text-center"><b>Create a new game</b></h1>
+<h1 class="h1 text-center mt-12 md:mt-20"><b>Create a new game</b></h1>
 <form
-	class="card relative top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center w-4/5 md:w-1/3 p-4 md:p-10 md:m-0"
+	class="card relative top-[37.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center w-4/5 md:w-1/3 p-4 md:p-10 md:m-0"
 	method="POST"
 >
 	<label class="label my-2 w-full">
@@ -124,7 +123,7 @@
 
 	<button
 		type="submit"
-		class="btn variant-filled w-1/2 lg:w-1/4 mt-6 lg:mt-10"
+		class="btn variant-filled w-1/2 lg:w-1/4 mt-6 lg:mt-10 min-w-fit"
 		data-sveltekit-preload-data="hover"
 		disabled={!allFieldsFilled}>Create game</button
 	>

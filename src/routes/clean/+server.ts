@@ -1,8 +1,8 @@
-import { VERCEL_CRON_SECRET } from '$env/static/private';
+import { CRON_SECRET } from '$env/static/private';
 import type { Game } from '$lib/types';
 export async function GET({ locals, request }) {
     try {
-        if(request.headers.get('Authorization') !== `Bearer ${VERCEL_CRON_SECRET}`) return new Response('Unauthorized', { status: 401 });
+        if(request.headers.get('Authorization') !== `Bearer ${CRON_SECRET}`) return new Response('Unauthorized', { status: 401 });
         const games = locals.pocketBase.collection('games');
     
         // Get date 2 days ago in format 'YYYY-MM-DD HH:MM:SS'

@@ -11,23 +11,18 @@
 	// REGION: Variables
 	export let data : Game;
 	data.is_team1_turn ? teamTurn.switchToTeam1() : teamTurn.switchToTeam2();
-	let words: Word[] = data.words;
 	let currWord: Word = data.words[0];
 	let gameStarted: boolean = false;
 	let timer: number = 60;
-	let team1: string = data.team1,
-		team2: string = data.team2;
-	let team1Score: number = data.team1_score,
-		team2Score: number = data.team2_score;
 	const toastStore = getToastStore();
 
 	// REGION: Functions
 	let timerInterval: number;
 	const nextWord: Function = (guessed: boolean = false): void => {
 		// Mark the current word as shown, let's not display it again later.
-		currWord.shown = true;
-		shuffleArray(words);
-		currWord = words.filter((word) => !word.shown)[0];
+		data.words[data.words.indexOf(currWord)].shown = true;
+		shuffleArray(data.words);
+		currWord = data.words.filter((word) => !word.shown)[0];
 		if (!currWord) {
 			const t: ToastSettings = {
 				message: 'The game ran out of words. Please create a new session to play again.',
@@ -41,24 +36,24 @@
 		// current word was guessed
 		if (guessed) {
 			if ($teamTurn) {
-				team1Score++;
+				data.team1_score++;
 			} else {
-				team2Score++;
+				data.team2_score++;
 			}
 		}
 		// current word was skipped
 		else {
-			if ($teamTurn && team1Score > 0) {
-				team1Score--;
+			if ($teamTurn && data.team1_score > 0) {
+				data.team1_score--;
 			}
-			if (!$teamTurn && team2Score > 0) {
-				team2Score--;
+			if (!$teamTurn && data.team2_score > 0) {
+				data.team2_score--;
 			}
 		}
 	};
 
 	const startTurn : MouseEventHandler<HTMLButtonElement> = () => {
-		if (!words || words.length === 0) {
+		if (!data.words || data.words.length === 0) {
 			const t = {
 				message: 'Failed to load words from server.',
 				timeout: 4000,
@@ -67,7 +62,7 @@
 			toastStore.trigger(t);
 			return;
 		}
-		currWord = words[0];
+		currWord = data.words[0];
 		gameStarted = true;
 		timer = 60;
 		timerInterval = setInterval(() => {
@@ -75,8 +70,8 @@
 			if (timer === 0 && gameStarted) {
 				// end of 1 turn, shuffle so the last shown word is not shown again
 				clearInterval(timerInterval);
-				shuffleArray(words);
-				const unusedWords = words.filter((word) => !word.shown);
+				shuffleArray(data.words);
+				const unusedWords = data.words.filter((word) => !word.shown);
 				if (unusedWords.length) currWord = unusedWords[0];
 				else {
 					const t = {
@@ -89,8 +84,10 @@
 				gameStarted = false;
 				if ($teamTurn) {
 					teamTurn.switchToTeam2();
+					data.is_team1_turn = false;
 				} else {
 					teamTurn.switchToTeam1();
+					data.is_team1_turn = true;
 				}
 				updateToDatabase();
 			}
@@ -99,12 +96,13 @@
 
 	const updateToDatabase: Function = (): void => {
 		const currState: Game = {
+			id: data.id,
 			game_id: $page.params.gameid,
-			team1: team1,
-			team2: team2,
-			team1_score: team1Score,
-			team2_score: team2Score,
-			words: words,
+			team1: data.team1,
+			team2: data.team2,
+			team1_score: data.team1_score,
+			team2_score: data.team2_score,
+			words: data.words,
 			is_team1_turn: $teamTurn
 		};
 		fetch(`${$page.params.gameid}/`, {
@@ -142,10 +140,10 @@
 </svelte:head>
 	{#if !gameStarted}
 		<h1 class="h1 my-10 text-center absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-max p-5">
-			<b class="select-none">Team {$teamTurn ? team1 : team2}</b>
+			<b class="select-none">Team {$teamTurn ? data.team1 : data.team2}</b>
 		</h1>
 		<h3 class="select-none h3 my-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-max p-5">
-			<b class="select-none">Current score: {$teamTurn ? team1Score : team2Score}</b>
+			<b class="select-none">Current score: {$teamTurn ? data.team1_score : data.team2_score}</b>
 		</h3>
 		<button
 			class="btn variant-filled top-[67.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 absolute"
@@ -153,7 +151,7 @@
 		>
 	{:else}
 		<h3 class="h3 my-2 md:my-5 flex justify-center items-center flex-col p-5">
-			<b>Current score: {$teamTurn ? team1Score : team2Score}</b>
+			<b>Current score: {$teamTurn ? data.team1_score : data.team2_score}</b>
 		</h3>
 		<div class="my-4 md:my-10 flex justify-center items-center flex-col">
 			<ProgressRadial

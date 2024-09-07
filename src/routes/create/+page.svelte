@@ -115,7 +115,7 @@
 	</label>
 	<label class="label my-2 w-full">
 		<span class="required">File of words</span>
-		<input class="input" type="file" bind:files on:change={onFileUpload} required />
+		<input class="input" type="file" bind:files accept=".csv" on:change={onFileUpload} required />
 	</label>
 
 	<!-- A hack to get words to form data -->

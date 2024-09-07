@@ -4,6 +4,7 @@ export type Word = {
 };
 
 export type Game = {
+	id: string;				       // PocketBase auto-assigned ID
 	game_id: string;
 	team1: string;
 	team2: string;
@@ -12,4 +13,3 @@ export type Game = {
 	words: Word[];
 	is_team1_turn: boolean;
 };
-

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { shuffleArray } from '$lib/helpers/common';
-	import { ProgressRadial, getToastStore } from '@skeletonlabs/skeleton';
-	import type { ToastSettings } from '@skeletonlabs/skeleton';
+	import { ProgressRadial, getToastStore, getModalStore } from '@skeletonlabs/skeleton';
+	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { Game, Word } from '$lib/types';
 	import { page } from '$app/stores';
 	import { teamTurn } from '$lib/teamsTurn';
@@ -9,30 +9,17 @@
 	/** @type {import('./$types').PageData} */
 
 	// REGION: Variables
-	export let data : Game;
+	export let data: Game;
 	data.is_team1_turn ? teamTurn.switchToTeam1() : teamTurn.switchToTeam2();
 	let currWord: Word = data.words[0];
 	let gameStarted: boolean = false;
 	let timer: number = 60;
 	const toastStore = getToastStore();
+	const modalStore = getModalStore();
 
 	// REGION: Functions
 	let timerInterval: number;
-	const nextWord: Function = (guessed: boolean = false): void => {
-		// Mark the current word as shown, let's not display it again later.
-		data.words[data.words.indexOf(currWord)].shown = true;
-		shuffleArray(data.words);
-		currWord = data.words.filter((word) => !word.shown)[0];
-		if (!currWord) {
-			const t: ToastSettings = {
-				message: 'The game ran out of words. Please create a new session to play again.',
-				timeout: 4000,
-				background: 'variant-filled-error'
-			};
-			toastStore.trigger(t);
-			clearInterval(timerInterval);
-			timer = 60;
-		}
+	const nextWord: Function = async (guessed: boolean = false): Promise<void> => {
 		// current word was guessed
 		if (guessed) {
 			if ($teamTurn) {
@@ -50,9 +37,17 @@
 				data.team2_score--;
 			}
 		}
+
+		// Mark the current word as shown, let's not display it again later.
+		data.words[data.words.indexOf(currWord)].shown = true;
+		shuffleArray(data.words);
+		currWord = data.words.filter((word) => !word.shown)[0];
+		if (!currWord) {
+			await endGame();
+		}
 	};
 
-	const startTurn : MouseEventHandler<HTMLButtonElement> = () => {
+	const startTurn: MouseEventHandler<HTMLButtonElement> = () => {
 		if (!data.words || data.words.length === 0) {
 			const t = {
 				message: 'Failed to load words from server.',
@@ -62,7 +57,8 @@
 			toastStore.trigger(t);
 			return;
 		}
-		currWord = data.words[0];
+		shuffleArray(data.words);
+		currWord = data.words.filter((word) => !word.shown)[0];
 		gameStarted = true;
 		timer = 60;
 		timerInterval = setInterval(() => {
@@ -94,7 +90,7 @@
 		}, 1000);
 	};
 
-	const updateToDatabase: Function = (): void => {
+	const updateToDatabase: Function = async (): Promise<void> => {
 		const currState: Game = {
 			id: data.id,
 			game_id: $page.params.gameid,
@@ -105,12 +101,34 @@
 			words: data.words,
 			is_team1_turn: $teamTurn
 		};
-		fetch(`${$page.params.gameid}/`, {
+		await fetch(`${$page.params.gameid}/`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(currState)
+		});
+	};
+
+	const endGame: Function = async (): Promise<void> => {
+		await updateToDatabase();
+		fetch(`${window.location.origin}/result/${$page.params.gameid}/`).then((res) => res.json()).then((res) => {
+			let message = "";
+			if(res.team1_score > res.team2_score) {
+				message = `<p>Team ${res.team1} - ${res.team1_score} 🎉</p><p>Team ${res.team2} - ${res.team2_score}</p>`
+			} else if (res.team1_score < res.team2_score) {
+				message = `<p>Team ${res.team1} - ${res.team1_score}</p><p>Team ${res.team2} - ${res.team2_score} 🎉</p>`
+			} else {
+				message = `<p>Team ${res.team1} - ${res.team1_score}</p><p>Team ${res.team2} - ${res.team2_score}</p><p>It's a tie 🤝</p>`
+			}
+			const resultModal : ModalSettings = {
+				type: 'alert',
+				title: 'Game Results',
+				body: message,
+			}
+			modalStore.trigger(resultModal);
+		}).catch((err) => {
+			console.error(err);
 		});
 	};
 
@@ -138,38 +156,45 @@
 <svelte:head>
 	<title>Guess the word</title>
 </svelte:head>
-	{#if !gameStarted}
-		<h1 class="h1 my-10 text-center absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-max p-5">
-			<b class="select-none">Team {$teamTurn ? data.team1 : data.team2}</b>
-		</h1>
-		<h3 class="select-none h3 my-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-max p-5">
-			<b class="select-none">Current score: {$teamTurn ? data.team1_score : data.team2_score}</b>
-		</h3>
-		<button
-			class="btn variant-filled top-[67.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 absolute"
-			on:click={startTurn}>Start turn</button
+{#if !gameStarted}
+	<button class="btn btn-sm variant-filled mx-4 !bg-red-700 m-4 float-right" on:click={() => endGame()}><b class="text-white">End Game</b></button>
+	<h1
+		class="h1 my-10 text-center absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-max p-5"
+	>
+		<b class="select-none">Team {$teamTurn ? data.team1 : data.team2}</b>
+	</h1>
+	<h3
+		class="select-none h3 my-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-max p-5"
+	>
+		<b class="select-none">Current score: {$teamTurn ? data.team1_score : data.team2_score}</b>
+	</h3>
+	<button
+		class="btn variant-filled top-[67.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 absolute"
+		on:click={startTurn}>Start turn</button
+	>
+{:else}
+	<h3 class="h3 my-2 md:my-5 flex justify-center items-center flex-col p-5">
+		<b>Current score: {$teamTurn ? data.team1_score : data.team2_score}</b>
+	</h3>
+	<div class="my-4 md:my-10 flex justify-center items-center flex-col">
+		<ProgressRadial
+			class="my-10 select-none"
+			meter={meter()}
+			track={track()}
+			strokeLinecap="round"
+			value={(timer / 60) * 100}>{timer}</ProgressRadial
 		>
-	{:else}
-		<h3 class="h3 my-2 md:my-5 flex justify-center items-center flex-col p-5">
-			<b>Current score: {$teamTurn ? data.team1_score : data.team2_score}</b>
-		</h3>
-		<div class="my-4 md:my-10 flex justify-center items-center flex-col">
-			<ProgressRadial
-				class="my-10 select-none"
-				meter={meter()}
-				track={track()}
-				strokeLinecap="round"
-				value={(timer / 60) * 100}>{timer}</ProgressRadial
+		<h1 class="h1 my-4 md:my-10 text-center flex justify-center items-center flex-col p-5">
+			<b>{currWord ? currWord.word : ''}</b>
+		</h1>
+		<div class="inline my-4 md:my-10">
+			<button
+				class="btn btn-sm variant-filled mx-4 !bg-red-700 !text-white"
+				on:click={() => nextWord(false)}><strong>Skip word</strong></button
+			><button
+				class="btn btn-sm variant-filled mx-4 !bg-green-700 !text-white"
+				on:click={() => nextWord(true)}><strong>Next word</strong></button
 			>
-			<h1 class="h1 my-4 md:my-10 text-center flex justify-center items-center flex-col p-5"><b>{currWord ? currWord.word : ''}</b></h1>
-			<div class="inline my-4 md:my-10">
-				<button
-					class="btn btn-sm variant-filled mx-4 !bg-red-700 !text-white"
-					on:click={() => nextWord(false)}><strong>Skip word</strong></button
-				><button
-					class="btn btn-sm variant-filled mx-4 !bg-green-700 !text-white"
-					on:click={() => nextWord(true)}><strong>Next word</strong></button
-				>
-			</div>
 		</div>
-	{/if}
+	</div>
+{/if}

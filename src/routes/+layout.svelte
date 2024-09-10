@@ -9,7 +9,8 @@
 		storePopup,
 		AppBar,
 		LightSwitch,
-		Toast
+		Toast,
+		Modal
 	} from '@skeletonlabs/skeleton';
 	import { enhance } from '$app/forms';
 	import { storeTheme } from '$lib/themeStore';
@@ -47,6 +48,9 @@
 
 <!-- Singleton Toast -->
 <Toast />
+
+<!-- Singleton Modal -->
+<Modal />
 <main>
 	<!-- App Bar -->
 	<AppBar>

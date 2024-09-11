@@ -2,14 +2,15 @@
 	import '../app.postcss';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 	import { browser } from '$app/environment';
-	import { CircleHelp, Code, ArrowDown, Palette } from 'lucide-svelte';
+	import { CircleHelp, Code, CircleChevronDown, Palette } from 'lucide-svelte';
 	import {
 		initializeStores,
 		popup,
 		storePopup,
 		AppBar,
 		LightSwitch,
-		Toast
+		Toast,
+		Modal
 	} from '@skeletonlabs/skeleton';
 	import { enhance } from '$app/forms';
 	import { storeTheme } from '$lib/themeStore';
@@ -47,6 +48,9 @@
 
 <!-- Singleton Toast -->
 <Toast />
+
+<!-- Singleton Modal -->
+<Modal />
 <main>
 	<!-- App Bar -->
 	<AppBar>
@@ -63,7 +67,7 @@
 				>
 					<Palette class="md:!hidden" />
 					<span class="hidden md:inline-block">Theme </span>
-					<ArrowDown class="hidden md:inline-block" />
+					<CircleChevronDown class="hidden md:inline-block" />
 				</button>
 				<!-- popup -->
 				<div class="card p-4 w-60 shadow-xl z-40" data-popup="theme">

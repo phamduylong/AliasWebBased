@@ -11,30 +11,33 @@
 	 * @param e
 	 */
 	const onFileUpload = async (e: Event): Promise<void> => {
-		const files = (e.target as HTMLInputElement).files;
-		if (files) {
-			if (files.length > 1) {
-				const t: ToastSettings = {
-					message: 'Only 1 file is allowed.',
-					timeout: 3000,
-					background: 'variant-filled-error'
-				};
-				toastStore.trigger(t);
-				return;
+		try {
+			const files = (e.target as HTMLInputElement).files;
+			if (files) {
+				if (files.length > 1) {
+					const t: ToastSettings = {
+						message: 'Only 1 file is allowed.',
+						timeout: 4000,
+						background: 'variant-filled-error'
+					};
+					toastStore.trigger(t);
+					return;
+				}
+				const file = files[0];
+				const fileExt = file.name.split('.').pop();
+				if (fileExt !== 'csv') {
+					throw new Error(`Only .csv files are allowed. You uploaded a .${fileExt} file.`);
+				}
+				const wordFile = await parseCSV(files[0]);
+				words = JSON.stringify(wordFile);
 			}
-			const file = files[0];
-			const fileExt = file.name.split('.').pop();
-			if (fileExt !== 'csv') {
-				const t: ToastSettings = {
-					message: `Only .csv files are allowed. You uploaded a .${fileExt} file.`,
-					timeout: 4000,
-					background: 'variant-filled-error'
-				};
-				toastStore.trigger(t);
-				return;
-			}
-			const wordFile = await parseCSV(files[0]);
-			words = JSON.stringify(wordFile);
+		} catch (err) {
+			const t: ToastSettings = {
+				message: (err as Error).message,
+				timeout: 4000,
+				background: 'variant-filled-error'
+			};
+			toastStore.trigger(t);
 		}
 	};
 	$: allFieldsFilled =
@@ -42,7 +45,8 @@
 		team1 !== '' &&
 		team2 !== '' &&
 		files?.length === 1 &&
-		files[0].name.endsWith('.csv');
+		files[0].name.endsWith('.csv') &&
+		files[0].size > 0;
 
 	export let form: ActionData;
 	export let data: PageData;
@@ -54,31 +58,29 @@
 	 */
 	const parseCSV = async (file: File): Promise<string[]> => {
 		return new Promise<string[]>((resolve, reject) => {
-			const reader = new FileReader();
-			reader.readAsText(file, 'latin1');
-			reader.onload = () => {
-				const text = reader.result as string;
-				if (!text) {
-					const t: ToastSettings = {
-						message: 'The file is empty.',
-						timeout: 3000,
-						background: 'variant-filled-error'
-					};
-					toastStore.trigger(t);
-					reject();
-				}
-				const lines = text.split('\n');
-				const words: string[] = [];
-				lines.forEach((line) => {
-					if (line !== '') {
-						const wordsInLine = line.split(';');
-						wordsInLine.forEach((word) => {
-							words.push(word.replace('\r', ''));
-						});
+			try {
+				const reader = new FileReader();
+				reader.readAsText(file, 'latin1');
+				reader.onload = () => {
+					const text = reader.result as string;
+					if (!text) {
+						reject(new Error('File is empty'));
 					}
-				});
-				resolve(words);
-			};
+					const lines = text.split('\n');
+					const words: string[] = [];
+					lines.forEach((line) => {
+						if (line !== '') {
+							const wordsInLine = line.split(';');
+							wordsInLine.forEach((word) => {
+								words.push(word.replace('\r', ''));
+							});
+						}
+					});
+					resolve(words);
+				};
+			} catch (err) {
+				reject(err);
+			}
 		});
 	};
 </script>

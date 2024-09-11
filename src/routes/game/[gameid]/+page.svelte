@@ -112,6 +112,7 @@
 	};
 
 	const endGame: Function = async (): Promise<void> => {
+		gameStarted = false;
 		await updateToDatabase();
 		fetch(`${window.location.origin}/result/${$page.params.gameid}/`)
 			.then((res) => res.json())

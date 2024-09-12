@@ -157,7 +157,7 @@
 		}
 	};
 
-	const scorePopUp : PopupSettings = {
+	const scorePopUp: PopupSettings = {
 		event: 'click',
 		target: 'scorePopUp',
 		placement: 'bottom'
@@ -169,25 +169,28 @@
 </svelte:head>
 
 <!-- End game button -->
-<button
-class="btn btn-sm bg-red-700 m-4 float-right font-bold"
-on:click={() => endGame()}>End Game&nbsp;<CircleX/></button
+<button class="btn btn-sm bg-red-700 m-4 float-right font-bold" on:click={() => endGame()}
+	>End Game&nbsp;<CircleX /></button
 >
 <!-- Score Popup -->
-<button class="md:collapse btn btn-sm variant-filled min-w-fit flex justify-center m-4 font-bold" use:popup={scorePopUp}>Scores&nbsp;<CircleChevronDown/></button>
-<div
-	class="card card-hover variant-soft-secondary p-2"
-	data-popup="scorePopUp"
+<button
+	class="md:collapse btn btn-sm variant-filled min-w-fit flex justify-center m-4 font-bold"
+	use:popup={scorePopUp}>Scores&nbsp;<CircleChevronDown /></button
 >
-	<span class="w-1/2 min-w-fit max-w-1/2 text-center mx-2">Team {data.team1}: {data.team1_score}</span>|<span class="w-1/2 min-w-fit max-w-1/2 text-center mx-2">Team {data.team2}: {data.team2_score}</span>
-
+<div class="card card-hover variant-soft-secondary p-2" data-popup="scorePopUp">
+	<span class="w-1/2 min-w-fit max-w-1/2 text-center mx-2"
+		>Team {data.team1}: {data.team1_score}</span
+	>|<span class="w-1/2 min-w-fit max-w-1/2 text-center mx-2"
+		>Team {data.team2}: {data.team2_score}</span
+	>
 </div>
 <!-- Score Banner -->
 <div
 	class="collapse md:visible card card-hover variant-soft-secondary w-80 min-w-fit relative left-1/2 -translate-x-1/2 flex justify-center select-none p-2"
 >
 	<span class="w-1/2 min-w-fit max-w-1/2 text-center">Team {data.team1}: {data.team1_score}</span>
-	<p class="bold h-max text-center mx-2">|</p><span class="w-1/2 min-w-fit max-w-1/2 text-center">Team {data.team2}: {data.team2_score}</span>
+	<p class="bold h-max text-center mx-2">|</p>
+	<span class="w-1/2 min-w-fit max-w-1/2 text-center">Team {data.team2}: {data.team2_score}</span>
 </div>
 
 {#if !gameStarted}

@@ -1,4 +1,4 @@
-# Alias Web Based 
+# Alias Web Based
 
 Thesis project done for my IT programme at Metropolia University of Applied Sciences. The project is a digitalized version of the popular Finnish game [Alias](https://alias.eu/about-alias).
 
@@ -50,10 +50,8 @@ After everything is set up, you shall have a directory named **AliasWebBased** i
 npm run dev -- --open
 ```
 
-A new browser window should open with the application preseting. 
-
+A new browser window should open with the application preseting.
 
 ## Notes
 
 - The project is using Vercel's cron jobs to do some clean ups with database entries. Using a local server will disable this feature and entries will have to be cleaned up manually.
-

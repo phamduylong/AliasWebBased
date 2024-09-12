@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 	import type { ActionData, PageData } from './$types';
+	
+	export let form: ActionData;
+	export let data: PageData;
 	let gameCode: string, team1: string, team2: string;
 	let files: FileList;
 	let words: string;
@@ -48,13 +51,11 @@
 		files[0].name.endsWith('.csv') &&
 		files[0].size > 0;
 
-	export let form: ActionData;
-	export let data: PageData;
-
 	/**
 	 * Parse the CSV file and return the words in an array.
 	 * This function is asynchronous because it reads the file.
 	 * @param file
+	 * @throws Error if the file is empty
 	 */
 	const parseCSV = async (file: File): Promise<string[]> => {
 		return new Promise<string[]>((resolve, reject) => {

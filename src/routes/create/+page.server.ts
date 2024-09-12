@@ -4,7 +4,7 @@ import type { Game } from '$lib/types';
 import { validateGame } from '$lib/helpers/common';
 import { ClientResponseError } from 'pocketbase';
 export const actions = {
-	default: async ({ locals, request }) => {	
+	default: async ({ locals, request }) => {
 		const gameId = randomUUID();
 		try {
 			const formData = await request.formData();
@@ -31,7 +31,11 @@ export const actions = {
 		} catch (err) {
 			console.error((err as Error).stack);
 			if (err instanceof ClientResponseError) {
-				throw error(err.status, err.message);
+				throw error(
+					err.response.code,
+					err.response.message ||
+						'Unknown error occurred. Check the server logs for more information.'
+				);
 			}
 			throw error(500, 'An error occurred.');
 		}

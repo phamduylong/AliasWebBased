@@ -20,7 +20,11 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 	} catch (err) {
 		console.error((err as Error).stack);
 		if (err instanceof ClientResponseError) {
-			throw error(err.status, err.message);
+			throw error(
+				err.response.code,
+				err.response.message ||
+					'Unknown error occurred. Check the server logs for more information.'
+			);
 		}
 		throw error(500, (err as Error).message);
 	}

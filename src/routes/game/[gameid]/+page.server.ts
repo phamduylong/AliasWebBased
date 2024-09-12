@@ -9,13 +9,22 @@ export const load = (async ({ locals, params }) => {
 		if (!gamesCollection) {
 			throw error(500, 'Database failure: Games collection is missing from database.');
 		}
-		const gameData : Game = await gamesCollection.getFirstListItem<Game>(`game_id="${gameId}"`);
+		const gameData: Game = await gamesCollection.getFirstListItem<Game>(`game_id="${gameId}"`);
 		return gameData;
 	} catch (err) {
 		console.error((err as Error).stack);
 		if (err instanceof ClientResponseError) {
-			throw error(err.status, err.message);
+			console.error(err.response.message);
+			if (err.response.code === 404) {
+				throw error(404, 'Game not found. Check the game ID and try again.');
+			} else {
+				throw error(
+					err.response.code,
+					err.response.message ||
+						'Unknown error occurred. Check the server logs for more information.'
+				);
+			}
 		}
-		throw error(500, (err as Error).message);
+		throw error(500, (err as Error).message ?? 'Unknown error');
 	}
 }) satisfies PageServerLoad;

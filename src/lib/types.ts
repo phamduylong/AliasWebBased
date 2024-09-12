@@ -4,7 +4,7 @@ export type Word = {
 };
 
 export type Game = {
-	id: string;				       // PocketBase auto-assigned ID
+	id: string; // PocketBase auto-assigned ID
 	game_id: string;
 	team1: string;
 	team2: string;

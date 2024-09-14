@@ -27,11 +27,11 @@ export function validateGame(game: Game): string[] {
 		erroneousMessages.push('Game ID is invalid');
 	}
 
-	if (!game.team1 || typeof game.team1 !== 'string' || game.team1 === '') {
+	if (!game.team1 || typeof game.team1 !== 'string' || game.team1 === '' || game.team1.length > 16) {
 		erroneousMessages.push('Name of team 1 is invalid');
 	}
 
-	if (!game.team2 || typeof game.team2 !== 'string' || game.team2 === '') {
+	if (!game.team2 || typeof game.team2 !== 'string' || game.team2 === '' || game.team2.length > 16) {
 		erroneousMessages.push('Name of team 2 is invalid');
 	}
 

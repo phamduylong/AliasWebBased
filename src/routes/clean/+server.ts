@@ -12,6 +12,8 @@ export async function GET({ locals, request }) {
 		const hms = date.toISOString().split('T')[1].substring(0, 8); // 'HH:MM:SS'
 		const filterDateString = `${ymd} ${hms}`;
 
+		console.log(`Cron job running at ${filterDateString}`);
+
 		if (!games)
 			return new Response('Database failure: Games collection is missing from database.', {
 				status: 500

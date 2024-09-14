@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { shuffleArray } from '$lib/helpers/common';
 	import { ProgressRadial, getToastStore, getModalStore, popup } from '@skeletonlabs/skeleton';
-	import type { ModalSettings, PopupSettings } from '@skeletonlabs/skeleton';
+	import type { ModalSettings, PopupSettings, ToastSettings } from '@skeletonlabs/skeleton';
 	import type { Game, Word } from '$lib/types';
 	import { page } from '$app/stores';
 	import { teamTurn } from '$lib/teamsTurn';
@@ -114,26 +114,24 @@
 	const endGame: Function = async (): Promise<void> => {
 		gameStarted = false;
 		await updateToDatabase();
-		fetch(`${window.location.origin}/result/${$page.params.gameid}/`)
+		fetch(`${window.location.origin}/results/${$page.params.gameid}/`)
 			.then((res) => res.json())
 			.then((res) => {
-				let message = '';
-				if (res.team1_score > res.team2_score) {
-					message = `<p>Team ${res.team1} - ${res.team1_score} 🎉</p><p>Team ${res.team2} - ${res.team2_score}</p>`;
-				} else if (res.team1_score < res.team2_score) {
-					message = `<p>Team ${res.team1} - ${res.team1_score}</p><p>Team ${res.team2} - ${res.team2_score} 🎉</p>`;
-				} else {
-					message = `<p>Team ${res.team1} - ${res.team1_score}</p><p>Team ${res.team2} - ${res.team2_score}</p><p>It's a tie 🤝</p>`;
-				}
-				const resultModal: ModalSettings = {
-					type: 'alert',
-					title: 'Game Results',
-					body: message
+				const modal: ModalSettings = {
+					type: 'component',
+					component: 'resultModalComponent',
+					meta: res
 				};
-				modalStore.trigger(resultModal);
+				modalStore.trigger(modal);
 			})
 			.catch((err) => {
 				console.error(err);
+				const toast : ToastSettings = {
+					message: `Failed to fetch game result. Error: ${err}`,
+					timeout: 4000,
+					background: 'variant-filled-error'
+				};
+				toastStore.trigger(toast);
 			});
 	};
 

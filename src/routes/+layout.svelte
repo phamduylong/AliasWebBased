@@ -12,10 +12,16 @@
 		Toast,
 		Modal
 	} from '@skeletonlabs/skeleton';
+	import type { ModalComponent } from '@skeletonlabs/skeleton';
 	import { enhance } from '$app/forms';
 	import { storeTheme } from '$lib/themeStore';
+	import ResultModal from '$lib/components/ResultModal.svelte';
 	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
+
+	const modalRegistry: Record<string, ModalComponent> = {
+		resultModalComponent: { ref: ResultModal }
+	};
 
 	const themes = [
 		{ type: 'skeleton', name: 'Skeleton', icon: '💀' },
@@ -51,7 +57,7 @@
 <Toast />
 
 <!-- Singleton Modal -->
-<Modal />
+<Modal components={modalRegistry}/>
 <!-- App Bar -->
 <AppBar>
 	<svelte:fragment slot="lead">

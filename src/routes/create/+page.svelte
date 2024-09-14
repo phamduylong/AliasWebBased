@@ -99,10 +99,11 @@
 		<input
 			type="text"
 			class="input"
-			placeholder="Name of team 1"
+			placeholder="Name of team 1 (max 16 characters)"
 			bind:value={team1}
 			name="team-1"
 			required
+			maxlength="16"
 		/>
 	</label>
 	<label class="label my-2 w-full">
@@ -110,10 +111,11 @@
 		<input
 			type="text"
 			class="input"
-			placeholder="Name of team 2"
+			placeholder="Name of team 2 (max 16 characters)"
 			bind:value={team2}
 			name="team-2"
 			required
+			maxlength="16"
 		/>
 	</label>
 	<label class="label my-2 w-full">

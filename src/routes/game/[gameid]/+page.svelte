@@ -114,7 +114,7 @@
 	const endGame: Function = async (): Promise<void> => {
 		gameStarted = false;
 		await updateToDatabase();
-		fetch(`${window.location.origin}/results/${$page.params.gameid}/`)
+		fetch(`${window.location.origin}/result/${$page.params.gameid}/`)
 			.then((res) => res.json())
 			.then((res) => {
 				const modal: ModalSettings = {

@@ -36,7 +36,7 @@
 			}
 		} catch (err) {
 			const t: ToastSettings = {
-				message: (err as Error).message,
+				message: (err as Error).message || 'Failed to read file.',
 				timeout: 4000,
 				background: 'variant-filled-error'
 			};

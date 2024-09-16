@@ -35,6 +35,10 @@ export function validateGame(game: Game): string[] {
 		erroneousMessages.push('Name of team 2 is invalid');
 	}
 
+	if (game.team1 === game.team2) {
+		erroneousMessages.push('Name of team 1 and team 2 are the same');
+	}
+
 	if (typeof game.team1_score !== 'number' || game.team1_score < 0) {
 		erroneousMessages.push('Score of team 1 is invalid');
 	}

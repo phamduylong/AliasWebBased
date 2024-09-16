@@ -11,13 +11,13 @@ export const GET = async ({ locals, params }): Promise<Response> => {
 			headers: { 'Content-Type': 'application/json' }
 		});
 	} catch (err) {
-		console.error((err as Error).stack);
+		console.error(err);
 		if (err instanceof ClientResponseError)
 			throw error(
 				err.response.code,
 				err.response.message ||
 					'Unknown error occurred. Check the server logs for more information.'
 			);
-		throw error(500, (err as Error).message);
+		throw error(500, (err as Error).message || err?.body?.message);
 	}
 };

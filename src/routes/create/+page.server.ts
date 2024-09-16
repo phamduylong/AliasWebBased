@@ -29,7 +29,7 @@ export const actions = {
 			const gamesCollection = locals.pocketBase.collection('games');
 			await gamesCollection.create<Game>(newGame);
 		} catch (err) {
-			console.error((err as Error).stack);
+			console.error(err);
 			if (err instanceof ClientResponseError) {
 				throw error(
 					err.response.code,
@@ -37,7 +37,7 @@ export const actions = {
 						'Unknown error occurred. Check the server logs for more information.'
 				);
 			}
-			throw error(500, 'An error occurred.');
+			throw error(500, (err as Error).message || err?.body?.message);
 		}
 		// Cannot be in the try catch block because it will catch the redirect
 		throw redirect(303, `/game/${gameId}`);

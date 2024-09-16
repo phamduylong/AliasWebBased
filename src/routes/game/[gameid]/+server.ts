@@ -18,7 +18,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		}
 		gamesCollection.update<Game>(currGame.id, currGame);
 	} catch (err) {
-		console.error((err as Error).stack);
+		console.error(err);
 		if (err instanceof ClientResponseError) {
 			throw error(
 				err.response.code,
@@ -26,7 +26,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 					'Unknown error occurred. Check the server logs for more information.'
 			);
 		}
-		throw error(500, (err as Error).message);
+		throw error(500, (err as Error).message || err?.body?.message);
 	}
 	return new Response('OK', { status: 200 });
 };

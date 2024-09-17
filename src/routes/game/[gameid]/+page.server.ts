@@ -12,7 +12,7 @@ export const load = (async ({ locals, params }) => {
 		const gameData: Game = await gamesCollection.getFirstListItem<Game>(`game_id="${gameId}"`);
 		return gameData;
 	} catch (err) {
-		console.error((err as Error).stack);
+		console.error(err);
 		if (err instanceof ClientResponseError) {
 			console.error(err.response.message);
 			if (err.response.code === 404) {
@@ -25,6 +25,6 @@ export const load = (async ({ locals, params }) => {
 				);
 			}
 		}
-		throw error(500, (err as Error).message ?? 'Unknown error');
+		throw error(500, (err as Error).message || err.body.message);
 	}
 }) satisfies PageServerLoad;

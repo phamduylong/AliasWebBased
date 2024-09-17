@@ -28,7 +28,7 @@ export async function GET({ locals, request }) {
 
 		return new Response('Games deleted.', { status: 200 });
 	} catch (err) {
-		console.error((err as Error).stack);
+		console.error(err);
 		return new Response((err as Error).message, { status: 500 });
 	}
 }

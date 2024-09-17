@@ -29,15 +29,6 @@
 				data.team2_score++;
 			}
 		}
-		// current word was skipped
-		else {
-			if ($teamTurn && data.team1_score > 0) {
-				data.team1_score--;
-			}
-			if (!$teamTurn && data.team2_score > 0) {
-				data.team2_score--;
-			}
-		}
 
 		// Mark the current word as shown, let's not display it again later.
 		data.words[data.words.indexOf(currWord)].shown = true;
@@ -113,6 +104,8 @@
 
 	const endGame: Function = async (): Promise<void> => {
 		gameStarted = false;
+		// clear the interval if the game was ended before the timer ran out
+		clearInterval(timerInterval);
 		await updateToDatabase();
 		fetch(`${window.location.origin}/result/${$page.params.gameid}/`)
 			.then((res) => res.json())

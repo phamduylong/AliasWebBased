@@ -39,7 +39,6 @@ export const actions = {
 			}
 			throw error(500, (err as Error).message || err?.body?.message);
 		}
-		// Cannot be in the try catch block because it will catch the redirect
-		throw redirect(303, `/game/${gameId}`);
+		return { success: true, gameId: gameId };
 	}
 };

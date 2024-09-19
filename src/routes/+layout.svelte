@@ -72,7 +72,7 @@
 				use:popup={{ event: 'click', target: 'theme', closeQuery: 'a[href]' }}
 			>
 				<Palette class="md:!hidden" />
-				<span class="hidden md:inline-block">Theme </span>
+				<span class="hidden md:inline-block">Theme</span>
 				<CircleChevronDown class="hidden md:inline-block" />
 			</button>
 			<!-- popup -->

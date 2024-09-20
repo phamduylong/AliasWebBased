@@ -91,13 +91,27 @@
 </svelte:head>
 
 {#if form?.success}
-<!-- Game was created successfully, let's show users how to share the game -->
-<h1 class="h1 text-center mt-12 mx-4 md:mt-20 font-bold">Copy game URL</h1>
-<h3 class="h3 text-center mt-12 mx-4 md:mt-20 font-bold">Copy and share the game URL to play with friends</h3> 
-<div class="w-4/5 md:w-1/2 relative top-[15%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-token card variant-soft p-4 flex items-center gap-4">
-	<input title="Game URL" class="input" type="text" readonly={true} value="{browser ? window.location.origin : ''}/game/{form?.gameId}" data-clipboard="gameURL" />
-	<button title="Copy game URL" use:clipboard={{ input: 'gameURL' }} class="btn variant-filled"><p class="font-bold">Copy</p><Clipboard/></button>
-</div>
+	<!-- Game was created successfully, let's show users how to share the game -->
+	<h1 class="h1 text-center mt-12 mx-4 md:mt-20 font-bold">Copy game URL</h1>
+	<h3 class="h3 text-center mt-12 mx-4 md:mt-20 font-bold">
+		Copy and share the game URL to play with friends
+	</h3>
+	<div
+		class="w-4/5 md:w-1/2 relative top-[15%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-token card variant-soft p-4 flex items-center gap-4"
+	>
+		<input
+			title="Game URL"
+			class="input"
+			type="text"
+			readonly={true}
+			value="{browser ? window.location.origin : ''}/game/{form?.gameId}"
+			data-clipboard="gameURL"
+		/>
+		<button title="Copy game URL" use:clipboard={{ input: 'gameURL' }} class="btn variant-filled"
+			><p class="font-bold">Copy</p>
+			<Clipboard /></button
+		>
+	</div>
 {:else}
 	<h1 class="h1 text-center mt-12 md:mt-20 font-bold">Create a new game</h1>
 	<form

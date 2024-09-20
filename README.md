@@ -50,7 +50,7 @@ After everything is set up, you shall have a directory named **AliasWebBased** i
 npm run dev -- --open
 ```
 
-A new browser window should open with the application preseting.
+A new browser window should open with the application presenting.
 
 ## Notes
 

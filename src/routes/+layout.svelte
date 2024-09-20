@@ -57,7 +57,7 @@
 <Toast />
 
 <!-- Singleton Modal -->
-<Modal components={modalRegistry}/>
+<Modal components={modalRegistry} />
 <!-- App Bar -->
 <AppBar>
 	<svelte:fragment slot="lead">

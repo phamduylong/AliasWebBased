@@ -119,7 +119,7 @@
 			})
 			.catch((err) => {
 				console.error(err);
-				const toast : ToastSettings = {
+				const toast: ToastSettings = {
 					message: `Failed to fetch game result. Error: ${err}`,
 					timeout: 4000,
 					background: 'variant-filled-error'

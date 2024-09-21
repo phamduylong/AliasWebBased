@@ -16,7 +16,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		if (errors.length !== 0) {
 			throw error(400, errors.join(', '));
 		}
-		gamesCollection.update<Game>(currGame.id, currGame);
+		await gamesCollection.update<Game>(currGame.id, currGame);
 	} catch (err) {
 		console.error(err);
 		if (err instanceof ClientResponseError) {

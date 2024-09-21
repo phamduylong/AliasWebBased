@@ -18,7 +18,7 @@
 		} else {
 			team1Css += ' variant-ghost-surface';
 			team2Css += ' variant-ghost-surface';
-			result = "It's a tie!";
+			result = "It's a tie game!";
 		}
 	}
 </script>

@@ -1,8 +1,11 @@
 import { pb } from '$lib/pocketbase';
 import PocketBase from 'pocketbase';
-import { POCKETBASE_URL } from '$env/static/private';
+import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
+import eventsource from 'eventsource';
 export const handle = async ({ event, resolve }) => {
-	event.locals.pocketBase = new PocketBase(POCKETBASE_URL);
+	global.EventSource = eventsource;
+
+	event.locals.pocketBase = new PocketBase(PUBLIC_POCKETBASE_URL);
 
 	pb.set(event.locals.pocketBase);
 

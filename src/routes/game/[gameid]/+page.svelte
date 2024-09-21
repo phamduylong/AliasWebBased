@@ -4,14 +4,14 @@
 	import type { ModalSettings, PopupSettings, ToastSettings } from '@skeletonlabs/skeleton';
 	import type { Game, Word } from '$lib/types';
 	import { page } from '$app/stores';
-	import { teamTurn } from '$lib/teamsTurn';
 	import type { MouseEventHandler } from 'svelte/elements';
 	import { CircleChevronDown, CircleX } from 'lucide-svelte';
+	import { pb } from "$lib/pocketbase";
+	import { onMount } from 'svelte';
 	/** @type {import('./$types').PageData} */
 
 	// REGION: Variables
 	export let data: Game;
-	data.is_team1_turn ? teamTurn.switchToTeam1() : teamTurn.switchToTeam2();
 	let currWord: Word = data.words[0];
 	let gameStarted: boolean = false;
 	let timer: number = 60;
@@ -23,7 +23,7 @@
 	const nextWord: Function = async (guessed: boolean = false): Promise<void> => {
 		// current word was guessed
 		if (guessed) {
-			if ($teamTurn) {
+			if (data.is_team1_turn) {
 				data.team1_score++;
 			} else {
 				data.team2_score++;
@@ -70,13 +70,8 @@
 					toastStore.trigger(t);
 				}
 				gameStarted = false;
-				if ($teamTurn) {
-					teamTurn.switchToTeam2();
-					data.is_team1_turn = false;
-				} else {
-					teamTurn.switchToTeam1();
-					data.is_team1_turn = true;
-				}
+				//Flip the turn
+				data.is_team1_turn = !data.is_team1_turn
 				updateToDatabase();
 			}
 		}, 1000);
@@ -91,7 +86,7 @@
 			team1_score: data.team1_score,
 			team2_score: data.team2_score,
 			words: data.words,
-			is_team1_turn: $teamTurn
+			is_team1_turn: data.is_team1_turn
 		};
 		await fetch(`${$page.params.gameid}/`, {
 			method: 'POST',
@@ -148,6 +143,13 @@
 		}
 	};
 
+	onMount(() => {
+		if($pb) {
+			$pb.collection("games").subscribe<Game>(data.id, (gameState) => {
+				data = gameState.record;
+			});
+		}
+	});
 	const scorePopUp: PopupSettings = {
 		event: 'click',
 		target: 'scorePopUp',
@@ -188,12 +190,12 @@
 	<h1
 		class="h1 my-10 text-center absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-max p-5"
 	>
-		<b class="select-none">Team {$teamTurn ? data.team1 : data.team2}</b>
+		<b class="select-none">Team {data.is_team1_turn ? data.team1 : data.team2}</b>
 	</h1>
 	<h3
 		class="select-none h3 my-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-max p-5"
 	>
-		<b class="select-none">Current score: {$teamTurn ? data.team1_score : data.team2_score}</b>
+		<b class="select-none">Current score: {data.is_team1_turn ? data.team1_score : data.team2_score}</b>
 	</h3>
 	<button
 		class="btn variant-filled top-[67.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 absolute"
@@ -201,7 +203,7 @@
 	>
 {:else}
 	<h3 class="h3 my-2 md:my-5 flex justify-center items-center flex-col p-5">
-		<b>Current score: {$teamTurn ? data.team1_score : data.team2_score}</b>
+		<b>Current score: {data.is_team1_turn ? data.team1_score : data.team2_score}</b>
 	</h3>
 	<div class="my-2 md:my-5 flex justify-center items-center flex-col">
 		<ProgressRadial

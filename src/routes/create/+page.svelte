@@ -113,7 +113,7 @@
 		>
 	</div>
 	<a href="/game/{form?.gameId}" class="btn variant-filled relative left-1/2 -translate-x-1/2 top-[25%]">
-		<span>Go to game</span>
+		<span class="font-bold">Go to game</span>
 		<span><ArrowRightCircle/></span>
 	</a>
 {:else}

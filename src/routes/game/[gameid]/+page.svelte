@@ -198,7 +198,7 @@
 		<b class="select-none">Current score: {data.is_team1_turn ? data.team1_score : data.team2_score}</b>
 	</h3>
 	<button
-		class="btn variant-filled top-[67.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 absolute"
+		class="btn variant-filled top-[67.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 absolute font-bold"
 		on:click={startTurn}>Start turn</button
 	>
 {:else}

@@ -6,7 +6,7 @@
 	import { page } from '$app/stores';
 	import type { MouseEventHandler } from 'svelte/elements';
 	import { CircleChevronDown, CircleX } from 'lucide-svelte';
-	import { pb } from "$lib/pocketbase";
+	import { pb } from '$lib/pocketbase';
 	import { onMount } from 'svelte';
 	/** @type {import('./$types').PageData} */
 
@@ -71,7 +71,7 @@
 				}
 				gameStarted = false;
 				//Flip the turn
-				data.is_team1_turn = !data.is_team1_turn
+				data.is_team1_turn = !data.is_team1_turn;
 				updateToDatabase();
 			}
 		}, 1000);
@@ -144,8 +144,8 @@
 	};
 
 	onMount(() => {
-		if($pb) {
-			$pb.collection("games").subscribe<Game>(data.id, (gameState) => {
+		if ($pb) {
+			$pb.collection('games').subscribe<Game>(data.id, (gameState) => {
 				data = gameState.record;
 			});
 		}
@@ -195,7 +195,9 @@
 	<h3
 		class="select-none h3 my-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-max p-5"
 	>
-		<b class="select-none">Current score: {data.is_team1_turn ? data.team1_score : data.team2_score}</b>
+		<b class="select-none"
+			>Current score: {data.is_team1_turn ? data.team1_score : data.team2_score}</b
+		>
 	</h3>
 	<button
 		class="btn variant-filled top-[67.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 absolute"

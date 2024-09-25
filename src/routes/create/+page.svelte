@@ -112,9 +112,12 @@
 			<Clipboard /></button
 		>
 	</div>
-	<a href="/game/{form?.gameId}" class="btn variant-filled relative left-1/2 -translate-x-1/2 top-[25%]">
+	<a
+		href="/game/{form?.gameId}"
+		class="btn variant-filled relative left-1/2 -translate-x-1/2 top-[25%]"
+	>
 		<span class="font-bold">Go to game</span>
-		<span><ArrowRightCircle/></span>
+		<span><ArrowRightCircle /></span>
 	</a>
 {:else}
 	<h1 class="h1 text-center mt-12 md:mt-20 font-bold">Create a new game</h1>

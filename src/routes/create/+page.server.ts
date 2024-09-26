@@ -20,7 +20,8 @@ export const actions = {
 				team1_score: 0,
 				team2_score: 0,
 				words: words,
-				is_team1_turn: true
+				is_team1_turn: true,
+				turn_started: false
 			};
 			const errors = validateGame(newGame);
 			if (errors.length !== 0) {

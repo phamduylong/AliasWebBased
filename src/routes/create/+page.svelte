@@ -27,6 +27,9 @@
 					return;
 				}
 				const file = files[0];
+				if (!file) {
+					throw new Error('No file selected');
+				}
 				const fileExt = file.name.split('.').pop();
 				if (fileExt !== 'csv') {
 					throw new Error(`Only .csv files are allowed. You uploaded a .${fileExt} file.`);

@@ -31,15 +31,21 @@
 		}
 
 		// Mark the current word as shown, let's not display it again later.
-		data.words[data.words.indexOf(currWord)].shown = true;
+		for (const word of data.words) {
+			if (word.word === currWord.word) {
+				word.shown = true;
+				break;
+			}
+		}
 		shuffleArray(data.words);
+		await updateToDatabase();
 		currWord = data.words.filter((word) => !word.shown)[0];
 		if (!currWord) {
 			await endGame();
 		}
 	};
 
-	const startTurn: MouseEventHandler<HTMLButtonElement> = () => {
+	const startTurn: MouseEventHandler<HTMLButtonElement> = async () => {
 		if (!data.words || data.words.length === 0) {
 			const t = {
 				message: 'Failed to load words from server.',
@@ -53,52 +59,47 @@
 		currWord = data.words.filter((word) => !word.shown)[0];
 		gameStarted = true;
 		timer = 60;
-		timerInterval = setInterval(() => {
+		data.turn_started = true;
+		await updateToDatabase();
+		timerInterval = setInterval(async () => {
 			timer--;
 			if (timer === 0 && gameStarted) {
 				// end of 1 turn, shuffle so the last shown word is not shown again
 				clearInterval(timerInterval);
 				shuffleArray(data.words);
 				const unusedWords = data.words.filter((word) => !word.shown);
-				if (unusedWords.length) currWord = unusedWords[0];
-				else {
+				if (!unusedWords.length) {
 					const t = {
 						message: 'The game ran out of words. Please create a new session to play again.',
 						timeout: 4000,
 						background: 'variant-filled-error'
 					};
 					toastStore.trigger(t);
+					await endGame();
 				}
+				currWord = unusedWords[0];
 				gameStarted = false;
 				//Flip the turn
 				data.is_team1_turn = !data.is_team1_turn;
+				data.turn_started = false;
 				updateToDatabase();
 			}
 		}, 1000);
 	};
 
 	const updateToDatabase: Function = async (): Promise<void> => {
-		const currState: Game = {
-			id: data.id,
-			game_id: $page.params.gameid,
-			team1: data.team1,
-			team2: data.team2,
-			team1_score: data.team1_score,
-			team2_score: data.team2_score,
-			words: data.words,
-			is_team1_turn: data.is_team1_turn
-		};
 		await fetch(`${$page.params.gameid}/`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify(currState)
+			body: JSON.stringify(data)
 		});
 	};
 
 	const endGame: Function = async (): Promise<void> => {
 		gameStarted = false;
+		data.turn_started = false;
 		// clear the interval if the game was ended before the timer ran out
 		clearInterval(timerInterval);
 		await updateToDatabase();
@@ -201,7 +202,8 @@
 	</h3>
 	<button
 		class="btn variant-filled top-[67.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 absolute font-bold"
-		on:click={startTurn}>Start turn</button
+		on:click={startTurn}
+		disabled={data.turn_started}>Start turn</button
 	>
 {:else}
 	<h3 class="h3 my-2 md:my-5 flex justify-center items-center flex-col p-5">

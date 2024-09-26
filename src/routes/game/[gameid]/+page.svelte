@@ -37,8 +37,11 @@
 				break;
 			}
 		}
+		// Putting await here will make the game wait for the database to update before showing the next word
+		// Let's not do that and affect the user experience. We can update the database in the background.
+		updateToDatabase();
+			
 		shuffleArray(data.words);
-		await updateToDatabase();
 		currWord = data.words.filter((word) => !word.shown)[0];
 		if (!currWord) {
 			await endGame();

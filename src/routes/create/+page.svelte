@@ -123,6 +123,7 @@
 		<span><ArrowRightCircle /></span>
 	</a>
 {:else}
+	<!-- Form to create a new game -->
 	<h1 class="h1 text-center mt-12 md:mt-20 font-bold">Create a new game</h1>
 	<form
 		class="card relative top-[37.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center w-4/5 md:w-1/3 p-4 md:p-10 md:m-0"

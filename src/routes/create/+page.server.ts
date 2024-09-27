@@ -1,6 +1,6 @@
-import { redirect, error } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import { randomUUID } from 'crypto';
-import type { Game } from '$lib/types';
+import type { Game, Word } from '$lib/types';
 import { validateGame } from '$lib/helpers/common';
 import { ClientResponseError } from 'pocketbase';
 export const actions = {
@@ -8,9 +8,14 @@ export const actions = {
 		const gameId = randomUUID();
 		try {
 			const formData = await request.formData();
-			let words = JSON.parse(formData.get('words') as string);
+			let words : string[] = JSON.parse(formData.get('words') as string);
+			const wordsArr : Word[] = [];
+			// make it a unique Set and then convert it back to an array. This prevents duplicate words to be included in the game.
+			words = [...new Set(words)];
 			for (let i = 0; i < words.length; i++) {
-				words[i] = { word: words[i], shown: false };
+				if(words[i] !== '') {
+					wordsArr.push({ word: words[i], shown: false });
+				}
 			}
 			const newGame: Game = {
 				id: '',
@@ -19,10 +24,11 @@ export const actions = {
 				team2: formData.get('team-2') as string,
 				team1_score: 0,
 				team2_score: 0,
-				words: words,
+				words: wordsArr,
 				is_team1_turn: true,
 				turn_started: false
 			};
+
 			const errors = validateGame(newGame);
 			if (errors.length !== 0) {
 				throw error(400, errors.join(', '));

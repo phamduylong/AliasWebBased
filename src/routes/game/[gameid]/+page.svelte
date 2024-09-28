@@ -162,8 +162,16 @@
 	// Real-time connection with pocketbase. Keeps the game in sync with other devices
 	onMount(() => {
 		if ($pb) {
-			$pb.collection('games').subscribe<Game>(data.id, (gameState) => {
-				data = gameState.record;
+			$pb.collection('games').subscribe<Game>(data.id, (realtimeData) => {
+				data.is_team1_turn = realtimeData.record.is_team1_turn;
+				data.turn_started = realtimeData.record.turn_started;
+				data.words = realtimeData.record.words;
+				// if the turn was started in this device, we don't want to update the scores to prevent flickering
+				// otherwise update other idle screens with the current scores
+				if(!gameStarted) {
+					data.team1_score = realtimeData.record.team1_score;
+					data.team2_score = realtimeData.record.team2_score;
+				}
 			});
 		}
 	});

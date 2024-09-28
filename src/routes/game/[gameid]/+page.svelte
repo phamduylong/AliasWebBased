@@ -19,7 +19,7 @@
 	const modalStore = getModalStore();
 
 	// REGION: Functions
-	let timerInterval: number;
+	let gameClockTimerInterval: number;
 	const nextWord: Function = async (guessed: boolean = false): Promise<void> => {
 		// current word was guessed
 		if (guessed) {
@@ -44,7 +44,16 @@
 		shuffleArray(data.words);
 		currWord = data.words.filter((word) => !word.shown)[0];
 		if (!currWord) {
-			await endGame();
+			gameStarted = false;
+			data.turn_started = false;
+			clearInterval(gameClockTimerInterval);
+			const t = {
+				message: 'The game ran out of words and will end now.',
+				timeout: 4000,
+				background: 'variant-filled-primary'
+			};
+			toastStore.trigger(t);
+			setTimeout(async () => await endGame(), 5000);
 		}
 	};
 
@@ -60,32 +69,33 @@
 		}
 		shuffleArray(data.words);
 		currWord = data.words.filter((word) => !word.shown)[0];
+		if (!currWord) {
+			gameStarted = false;
+			data.turn_started = false;
+			clearInterval(gameClockTimerInterval);
+			const t = {
+				message: 'The game ran out of words and will end now.',
+				timeout: 4000,
+				background: 'variant-filled-primary'
+			};
+			toastStore.trigger(t);
+			setTimeout(async () => await endGame(), 5000);
+			return;
+		}
 		gameStarted = true;
 		timer = 60;
 		data.turn_started = true;
+		// let's await here to make sure the database is updated and other devices can't start, then we start the game on current device
 		await updateToDatabase();
-		timerInterval = setInterval(async () => {
+		gameClockTimerInterval = setInterval(async () => {
 			timer--;
 			if (timer === 0 && gameStarted) {
-				// end of 1 turn, shuffle so the last shown word is not shown again
-				clearInterval(timerInterval);
-				shuffleArray(data.words);
-				const unusedWords = data.words.filter((word) => !word.shown);
-				if (!unusedWords.length) {
-					const t = {
-						message: 'The game ran out of words. Please create a new session to play again.',
-						timeout: 4000,
-						background: 'variant-filled-error'
-					};
-					toastStore.trigger(t);
-					await endGame();
-				}
-				currWord = unusedWords[0];
+				// turn ended, update the database and switch teams
+				clearInterval(gameClockTimerInterval);
 				gameStarted = false;
-				//Flip the turn
 				data.is_team1_turn = !data.is_team1_turn;
 				data.turn_started = false;
-				updateToDatabase();
+				await updateToDatabase();
 			}
 		}, 1000);
 	};
@@ -104,7 +114,7 @@
 		gameStarted = false;
 		data.turn_started = false;
 		// clear the interval if the game was ended before the timer ran out
-		clearInterval(timerInterval);
+		clearInterval(gameClockTimerInterval);
 		await updateToDatabase();
 		fetch(`${window.location.origin}/result/${$page.params.gameid}/`)
 			.then((res) => res.json())
@@ -148,6 +158,7 @@
 	};
 
 	onMount(() => {
+		// Real-time connection with pocketbase. Keeps the game in sync with other devices
 		if ($pb) {
 			$pb.collection('games').subscribe<Game>(data.id, (gameState) => {
 				data = gameState.record;

@@ -15,11 +15,13 @@
 	let currWord: Word = data.words[0];
 	let gameStarted: boolean = false;
 	let timer: number = 60;
+	let gameClockTimerInterval: number;
+
+	// Singleton stores
 	const toastStore = getToastStore();
 	const modalStore = getModalStore();
 
 	// REGION: Functions
-	let gameClockTimerInterval: number;
 	const nextWord: Function = async (guessed: boolean = false): Promise<void> => {
 		// current word was guessed
 		if (guessed) {
@@ -40,7 +42,7 @@
 		// Putting await here will make the game wait for the database to update before showing the next word
 		// Let's not do that and affect the user experience. We can update the database in the background.
 		updateToDatabase();
-			
+
 		shuffleArray(data.words);
 		currWord = data.words.filter((word) => !word.shown)[0];
 		if (!currWord) {
@@ -157,14 +159,16 @@
 		}
 	};
 
+	// Real-time connection with pocketbase. Keeps the game in sync with other devices
 	onMount(() => {
-		// Real-time connection with pocketbase. Keeps the game in sync with other devices
 		if ($pb) {
 			$pb.collection('games').subscribe<Game>(data.id, (gameState) => {
 				data = gameState.record;
 			});
 		}
 	});
+
+	// Game score popup
 	const scorePopUp: PopupSettings = {
 		event: 'click',
 		target: 'scorePopUp',
@@ -176,29 +180,38 @@
 	<title>Guess the word</title>
 </svelte:head>
 
-<!-- End game button -->
-<button class="btn btn-sm bg-red-700 m-4 float-right font-bold" on:click={() => endGame()}
-	>End Game&nbsp;<CircleX /></button
->
-<!-- Score Popup -->
-<button
-	class="md:collapse btn btn-sm variant-filled min-w-fit flex justify-center m-4 font-bold"
-	use:popup={scorePopUp}>Scores&nbsp;<CircleChevronDown /></button
->
-<div class="card card-hover variant-soft-secondary p-2" data-popup="scorePopUp">
-	<span class="w-1/2 min-w-fit max-w-1/2 text-center mx-2"
-		>Team {data.team1}: {data.team1_score}</span
-	>|<span class="w-1/2 min-w-fit max-w-1/2 text-center mx-2"
-		>Team {data.team2}: {data.team2_score}</span
+<!-- Score Banner/Popup & End Game Button -->
+<div class="grid grid-flow-col grid-cols-3">
+	<!-- Score Popup Trigger (sm) -->
+	<button
+		class="md:collapse btn btn-sm variant-filled w-28 flex justify-center m-4 font-bold"
+		use:popup={scorePopUp}>Scores&nbsp;<CircleChevronDown /></button
 	>
-</div>
-<!-- Score Banner -->
-<div
-	class="collapse md:visible card card-hover variant-soft-secondary w-80 min-w-fit relative left-1/2 -translate-x-1/2 flex justify-center select-none p-2"
->
-	<span class="w-1/2 min-w-fit max-w-1/2 text-center">Team {data.team1}: {data.team1_score}</span>
-	<p class="bold h-max text-center mx-2">|</p>
-	<span class="w-1/2 min-w-fit max-w-1/2 text-center">Team {data.team2}: {data.team2_score}</span>
+
+	<!-- Score Popup Data (sm) -->
+	<div class="card card-hover variant-soft-secondary p-2" data-popup="scorePopUp">
+		<span class="w-1/2 min-w-fit max-w-1/2 text-center mx-2"
+			>Team {data.team1}: {data.team1_score}</span
+		>|<span class="w-1/2 min-w-fit max-w-1/2 text-center mx-2"
+			>Team {data.team2}: {data.team2_score}</span
+		>
+	</div>
+
+	<!-- Score Banner (lg - xl) -->
+	<div
+		class="collapse md:visible card card-hover variant-soft-secondary md:w-80 lg:w-96 min-w-fit relative left-1/2 -translate-x-1/2 flex justify-center select-none p-2 m-4"
+	>
+		<span class="w-1/2 min-w-fit max-w-1/2 text-center">Team {data.team1}: {data.team1_score}</span>
+		<p class="bold h-max text-center mx-2">|</p>
+		<span class="w-1/2 min-w-fit max-w-1/2 text-center">Team {data.team2}: {data.team2_score}</span>
+	</div>
+	
+	<!-- End Game Button -->
+	<div class="flex justify-end">
+		<button class="btn btn-sm bg-red-700 m-4 font-bold" on:click={() => endGame()}
+			>End Game&nbsp;<CircleX /></button
+		>
+	</div>
 </div>
 
 {#if !gameStarted}

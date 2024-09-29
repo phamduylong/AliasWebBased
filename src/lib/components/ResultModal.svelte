@@ -30,14 +30,14 @@
 			<button class="my-2 mx-4" on:click={() => modalStore.clear()}><CircleX /></button>
 		</div>
 		<hr />
-		<div class="flex w-full h-full divide-x-2F">
+		<div class="flex w-full h-full divide-x-2">
 			<div class={team1Css}>
-				<p class="m-10 text-center">
+				<p class="my-5 mx-2 text-center">
 					Team {$modalStore[0].meta.team1}<br />{$modalStore[0].meta.team1_score}
 				</p>
 			</div>
 			<div class={team2Css}>
-				<p class="m-10 text-center">
+				<p class="my-5 mx-2 text-center">
 					Team {$modalStore[0].meta.team2}<br />{$modalStore[0].meta.team2_score}
 				</p>
 			</div>

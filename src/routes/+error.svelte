@@ -18,6 +18,10 @@
 	];
 </script>
 
+<svelte:head>
+	<title>An Error Occurred D:</title>
+</svelte:head>
+
 <div class="select-none p-10">
 	<h1 class="h1 my-10">
 		{emotes[Math.floor(Math.random() * emotes.length)]} something wrong happened...

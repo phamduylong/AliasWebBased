@@ -168,7 +168,7 @@
 				data.words = realtimeData.record.words;
 				// if the turn was started in this device, we don't want to update the scores to prevent flickering
 				// otherwise update other idle screens with the current scores
-				if(!gameStarted) {
+				if (!gameStarted) {
 					data.team1_score = realtimeData.record.team1_score;
 					data.team2_score = realtimeData.record.team2_score;
 				}
@@ -209,14 +209,19 @@
 	<div
 		class="collapse md:visible card card-hover variant-soft-secondary md:w-80 lg:w-96 min-w-fit relative left-1/2 -translate-x-1/2 flex justify-center select-none p-2 m-4 divide-x-2"
 	>
-		<span class="w-1/2 min-w-fit max-w-1/2 flex text-center justify-center items-center">Team {data.team1}: {data.team1_score}</span>
-		<span class="w-1/2 min-w-fit max-w-1/2 flex text-center justify-center items-center">Team {data.team2}: {data.team2_score}</span>
+		<span class="w-1/2 min-w-fit max-w-1/2 flex text-center justify-center items-center"
+			>Team {data.team1}: {data.team1_score}</span
+		>
+		<span class="w-1/2 min-w-fit max-w-1/2 flex text-center justify-center items-center"
+			>Team {data.team2}: {data.team2_score}</span
+		>
 	</div>
-	
+
 	<!-- End Game Button -->
 	<div class="flex justify-end">
-		<button class="btn btn-sm bg-red-700 w-fit flex justify-center m-6 font-bold" on:click={() => endGame()}
-			>End Game&nbsp;<CircleX /></button
+		<button
+			class="btn btn-sm bg-red-700 w-fit flex justify-center m-6 font-bold"
+			on:click={() => endGame()}>End Game&nbsp;<CircleX /></button
 		>
 	</div>
 </div>

@@ -2,7 +2,7 @@
 	import '../app.postcss';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 	import { browser } from '$app/environment';
-	import { CircleHelp, Code, CircleChevronDown, Palette } from 'lucide-svelte';
+	import { Code, CircleChevronDown, Palette, Globe } from 'lucide-svelte';
 	import {
 		initializeStores,
 		popup,
@@ -10,12 +10,19 @@
 		AppBar,
 		LightSwitch,
 		Toast,
-		Modal
+		Modal,
+		Avatar
 	} from '@skeletonlabs/skeleton';
 	import type { ModalComponent } from '@skeletonlabs/skeleton';
 	import { enhance } from '$app/forms';
 	import { storeTheme } from '$lib/themeStore';
 	import ResultModal from '$lib/components/ResultModal.svelte';
+	import { t, locale } from '$lib/i18n';
+	import finland from '$lib/assets/finland.svg';
+	import uk from '$lib/assets/united-kingdom.svg';
+	import sweden from '$lib/assets/sweden.svg';
+	import { onMount } from 'svelte';
+	import type { Locale } from '$lib/types';
 	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
@@ -36,6 +43,12 @@
 		{ type: 'crimson', name: 'Crimson', icon: '⭕' }
 	] as const;
 
+	const languages = [
+		{ localeCode: 'en', name: 'English', icon: uk },
+		{ localeCode: 'fi', name: 'Suomi', icon: finland },
+		{ localeCode: 'sv', name: 'Svenska', icon: sweden }
+	] as const;
+
 	// Dear future self, I am very sorry for this any type. GL dealing with it.
 	const setTheme = ({ formData }: any) => {
 		const theme = formData.get('theme')?.toString();
@@ -51,6 +64,13 @@
 		if (!browser) return;
 		document.body.setAttribute('data-theme', $storeTheme);
 	}
+
+	onMount(() => {
+		if (browser) {
+			const storedLocale = localStorage.getItem('locale') as Locale;
+			if (storedLocale) $locale = storedLocale;
+		}
+	});
 </script>
 
 <!-- Singleton Toast -->
@@ -61,7 +81,7 @@
 <!-- App Bar -->
 <AppBar>
 	<svelte:fragment slot="lead">
-		<a href="/"><strong class="text-xl uppercase">Alias Web Game</strong></a>
+		<a href="/"><strong class="text-xl uppercase select-none">Alias Web Game</strong></a>
 	</svelte:fragment>
 	<svelte:fragment slot="trail">
 		<!-- Theme -->
@@ -72,14 +92,14 @@
 				use:popup={{ event: 'click', target: 'theme', closeQuery: 'a[href]' }}
 			>
 				<Palette class="md:!hidden" />
-				<span class="hidden md:inline-block">Theme</span>
+				<span class="hidden md:inline-block">{$t('nav.theme')}</span>
 				<CircleChevronDown class="hidden md:inline-block" />
 			</button>
 			<!-- popup -->
 			<div class="card p-4 w-60 shadow-xl z-40" data-popup="theme">
 				<div class="space-y-4">
 					<section class="flex justify-between items-center">
-						<h6 class="h6">Mode</h6>
+						<h6 class="h6">{$t('nav.mode')}</h6>
 						<LightSwitch />
 					</section>
 					<hr />
@@ -106,12 +126,49 @@
 				</div>
 			</div>
 		</div>
-		<a class="btn hover:variant-soft-primary hidden md:inline-block" href="/faq">
-			<span class="hidden md:inline-block">Help</span>
-		</a>
-		<a class="btn hover:variant-soft-primary md:hidden" href="/faq">
-			<CircleHelp class="md:hidden" />
-		</a>
+
+		<!-- Language -->
+		<div>
+			<!-- trigger -->
+			<button
+				class="btn hover:variant-soft-primary"
+				use:popup={{ event: 'click', target: 'language', closeQuery: 'a[href]' }}
+			>
+				<Globe class="md:hidden" />
+				<span class="hidden md:inline-block">{$t('nav.language')}</span>
+				<CircleChevronDown class="hidden md:inline-block" />
+			</button>
+			<!-- popup -->
+			<div class="card p-4 shadow-xl z-40" data-popup="language">
+				<div class="space-y-4">
+					<nav class="list-nav p-4 -m-4 max-h-64 lg:max-h-[500px] overflow-y-auto">
+						<div>
+							<ul>
+								{#each languages as { icon, name, localeCode }}
+									<li>
+										<button
+											class="option w-full h-full"
+											type="submit"
+											name="theme"
+											value={localeCode}
+											on:click={() => {
+												if (browser) localStorage.setItem('locale', localeCode);
+												$locale = localeCode;
+											}}
+										>
+											<span class="flex-auto text-left">{name}</span>
+											<Avatar src={icon} width="w-4" />
+										</button>
+									</li>
+								{/each}
+							</ul>
+						</div>
+					</nav>
+				</div>
+			</div>
+		</div>
+
+		<!-- GitHub -->
 		<a
 			class="btn hover:variant-soft-primary hidden md:inline-block"
 			href="https://github.com/phamduylong/AliasWebBased"

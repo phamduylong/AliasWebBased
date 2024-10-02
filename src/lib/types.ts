@@ -14,3 +14,5 @@ export type Game = {
 	is_team1_turn: boolean;
 	turn_started: boolean;
 };
+
+export type Locale = 'en' | 'fi' | 'sv';

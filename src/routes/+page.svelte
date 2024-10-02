@@ -1,5 +1,4 @@
-<script>
-	// @ts-nocheck
+<script lang="ts">
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { t, locale } from '$lib/i18n';
 	const toastStore = getToastStore();
@@ -7,13 +6,12 @@
 	$: gameCodeEmpty = gameCode === '';
 	/**
 	 * Check if the string is a valid HTTP URL.
-	 * @param string The string to check
-	 * @returns {boolean} True if the string is a valid HTTP URL, false otherwise
+	 * @param string The string to be checked
+	 * @returns {boolean} true if the string is a valid HTTP URL, false otherwise
 	 * @see https://stackoverflow.com/a/43467144/14126819
 	 */
-	const isValidHttpUrl = (string) => {
+	const isValidHttpUrl = (string : string) : boolean => {
 		let url;
-
 		try {
 			url = new URL(string);
 		} catch (_) {
@@ -24,14 +22,14 @@
 
 	let redirectUrl = '';
 	// Let's account if the user enters the whole URL instead of a game code
-	const gameCodeChange = () => {
+	const gameCodeChange : Function = () => {
 		if (gameCodeEmpty || !isValidHttpUrl(gameCode)) {
 			redirectUrl = gameCode;
 		} else if (isValidHttpUrl(gameCode)) {
 			const url = new URL(gameCode);
 			// I don't want users to go to external sites
 			if (url.origin === window.location.origin) {
-				redirectUrl = url.pathname.split('/').pop();
+				redirectUrl = url.pathname.split('/').pop() || "";
 			} else {
 				redirectUrl = '';
 				const toast = {
@@ -57,7 +55,7 @@
 		class="input w-3/4 my-4"
 		placeholder={$t('index_page.enter_game_code')}
 		bind:value={gameCode}
-		on:input={gameCodeChange}
+		on:input={() => gameCodeChange}
 	/>
 	<a
 		href={gameCodeEmpty ? '' : `/game/${redirectUrl}`}

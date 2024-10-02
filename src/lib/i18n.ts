@@ -22,6 +22,7 @@ function translate(locale: Locale, key: string, vars: Record<string, string>) {
 	if (!locale) throw new Error(`no translation for key "${key}"`);
 
 	// Grab the translation from the translations object.
+	// @ts-ignore
 	let text = translations[locale][key];
 
 	if (!text) throw new Error(`no translation found for ${locale}.${key}`);

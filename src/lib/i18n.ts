@@ -7,8 +7,10 @@ export const locale = writable<Locale>('fi');
 const locales = Object.keys(translations);
 
 if (browser) {
-	const storedLocale = (localStorage.getItem('locale') as Locale) || 'fi';
-	locale.set(storedLocale);
+	const storedOrPreferredLocale =
+		(localStorage.getItem('locale') as Locale) || navigator.language.split('-')[0] || 'fi';
+	localStorage.setItem('locale', storedOrPreferredLocale);
+	locale.set(storedOrPreferredLocale);
 }
 
 function translate(locale: Locale, key: string, vars: Record<string, string>) {

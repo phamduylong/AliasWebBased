@@ -12,9 +12,9 @@ export const actions = {
 			const wordsArr: Word[] = [];
 			// make it a unique Set and then convert it back to an array. This prevents duplicate words to be included in the game.
 			words = [...new Set(words)];
-			for (let i = 0; i < words.length; i++) {
-				if (words[i] !== '') {
-					wordsArr.push({ word: words[i], shown: false });
+			for (const element of words) {
+				if (element !== '') {
+					wordsArr.push({ word: element, shown: false });
 				}
 			}
 			const newGame: Game = {

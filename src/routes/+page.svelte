@@ -1,6 +1,7 @@
 <script>
 	// @ts-nocheck
 	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { t, locale } from '$lib/i18n';
 	const toastStore = getToastStore();
 	let gameCode = '';
 	$: gameCodeEmpty = gameCode === '';
@@ -23,23 +24,26 @@
 
 	let redirectUrl = '';
 	// Let's account if the user enters the whole URL instead of a game code
-	$: if (gameCodeEmpty || !isValidHttpUrl(gameCode)) {
-		redirectUrl = gameCode;
-	} else if (isValidHttpUrl(gameCode)) {
-		const url = new URL(gameCode);
-		// I don't want users to go to external sites
-		if (url.origin === window.location.origin) {
-			redirectUrl = url.pathname.split('/').pop();
-		} else {
-			redirectUrl = '';
-			const t = {
-				message: 'External URLs are not allowed.',
-				timeout: 4000,
-				background: 'variant-filled-error'
-			};
-			toastStore.trigger(t);
+	const gameCodeChange = () => {
+		if (gameCodeEmpty || !isValidHttpUrl(gameCode)) {
+			redirectUrl = gameCode;
+		} else if (isValidHttpUrl(gameCode)) {
+			const url = new URL(gameCode);
+			// I don't want users to go to external sites
+			if (url.origin === window.location.origin) {
+				redirectUrl = url.pathname.split('/').pop();
+			} else {
+				redirectUrl = '';
+				const toast = {
+					message: $t('index_page.external_url_not_allowed'),
+					timeout: 4000,
+					background: 'variant-filled-error'
+				};
+				toastStore.trigger(toast);
+				gameCode = '';
+			}
 		}
-	}
+	};
 </script>
 
 <svelte:head>
@@ -48,7 +52,13 @@
 <div
 	class="card card-hover relative top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center w-3/4 lg:w-1/4 p-4 lg:p-10 my-10 lg:m-0"
 >
-	<input type="text" class="input w-3/4 my-4" placeholder="Enter game code" bind:value={gameCode} />
+	<input
+		type="text"
+		class="input w-3/4 my-4"
+		placeholder={$t('index_page.enter_game_code')}
+		bind:value={gameCode}
+		on:input={gameCodeChange}
+	/>
 	<a
 		href={gameCodeEmpty ? '' : `/game/${redirectUrl}`}
 		data-sveltekit-preload-data="hover"
@@ -56,10 +66,11 @@
 		><button
 			class="btn variant-filled w-full"
 			disabled={gameCodeEmpty}
-			title={gameCodeEmpty ? "Game code is empty. Can't join." : 'Join game'}>Join game</button
+			title={gameCodeEmpty ? $t('index_page.game_code_empty') : $t('index_page.join_game')}
+			>{$t('index_page.join_game')}</button
 		></a
 	>
 	<a href="/create" data-sveltekit-preload-data="hover" class="w-3/4 my-4"
-		><button class="btn variant-filled w-full">Create a new game</button></a
+		><button class="btn variant-filled w-full">{$t('index_page.create_game')}</button></a
 	>
 </div>

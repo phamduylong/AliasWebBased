@@ -11,7 +11,7 @@
 	const toastStore = getToastStore();
 
 	/**
-	 * Bit of a dirty hack to get the words into a hidden input field and into the form data to send to the server.
+	 * A bit of a dirty hack to get the words into a hidden input field and into the form data to send to the server.
 	 * @param e
 	 */
 	const onFileUpload = async (e: Event): Promise<void> => {

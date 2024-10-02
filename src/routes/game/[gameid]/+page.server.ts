@@ -4,13 +4,12 @@ import type { Game } from '$lib/types';
 import { ClientResponseError } from 'pocketbase';
 export const load = (async ({ locals, params }) => {
 	try {
-		const gameId = params.gameid;
+		const gameId = params.gameid || "";
 		const gamesCollection = locals.pocketBase.collection('games');
 		if (!gamesCollection) {
 			throw error(500, 'Database failure: Games collection is missing from database.');
 		}
-		const gameData: Game = await gamesCollection.getFirstListItem<Game>(`game_id="${gameId}"`);
-		return gameData;
+		return await gamesCollection.getFirstListItem<Game>(`game_id="${gameId}"`);
 	} catch (err) {
 		console.error(err);
 		if (err instanceof ClientResponseError) {

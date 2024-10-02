@@ -34,6 +34,7 @@ export const actions = {
 				throw error(400, errors.join(', '));
 			}
 			const gamesCollection = locals.pocketBase.collection('games');
+			// @ts-ignore
 			await gamesCollection.create<Game>(newGame);
 		} catch (err) {
 			console.error(err);

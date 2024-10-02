@@ -18,13 +18,14 @@ export async function GET({ locals, request }) {
 			return new Response('Database failure: Games collection is missing from database.', {
 				status: 500
 			});
+		// @ts-ignore
 		const expiredGames = await games.getFullList<Game>({
 			filter: `created <=  "${filterDateString}"`
 		});
-		if (expiredGames.length === 0) return new Response('No games to delete.', { status: 200 });
-		expiredGames.forEach(async (game) => {
+		if (expiredGames.length === 0) return new Response('No games to delete.', { status: 204 });
+		for (const game of expiredGames) {
 			await games.delete(game.id);
-		});
+		}
 
 		return new Response('Games deleted.', { status: 200 });
 	} catch (err) {

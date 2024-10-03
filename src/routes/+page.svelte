@@ -6,14 +6,14 @@
 	$: gameCodeEmpty = gameCode === '';
 	/**
 	 * Check if the string is a valid HTTP URL.
-	 * @param string The string to be checked
+	 * @param str The string to be checked
 	 * @returns {boolean} true if the string is a valid HTTP URL, false otherwise
 	 * @see https://stackoverflow.com/a/43467144/14126819
 	 */
-	const isValidHttpUrl = (string : string) : boolean => {
+	const isValidHttpUrl = (str : string) : boolean => {
 		let url;
 		try {
-			url = new URL(string);
+			url = new URL(str);
 		} catch (_) {
 			return false;
 		}
@@ -23,7 +23,8 @@
 	let redirectUrl = '';
 	// Let's account if the user enters the whole URL instead of a game code
 	const gameCodeChange : Function = () => {
-		if (gameCodeEmpty || !isValidHttpUrl(gameCode)) {
+		if (!isValidHttpUrl(gameCode)) {
+			// hopefully this is the game code alone, but I can't prevent user from doing stupid things
 			redirectUrl = gameCode;
 		} else if (isValidHttpUrl(gameCode)) {
 			const url = new URL(gameCode);
@@ -55,7 +56,7 @@
 		class="input w-3/4 my-4"
 		placeholder={$t('index_page.enter_game_code')}
 		bind:value={gameCode}
-		on:input={() => gameCodeChange}
+		on:input={gameCodeChange}
 	/>
 	<a
 		href={gameCodeEmpty ? '' : `/game/${redirectUrl}`}

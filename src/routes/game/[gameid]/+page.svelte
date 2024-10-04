@@ -222,7 +222,8 @@
 	<div class="flex justify-end">
 		<button
 			class="btn btn-sm bg-red-700 w-fit flex justify-center m-6 font-bold"
-			on:click={() => endGame()} disabled={data.turn_started}>{$t('game_page.end_game')}&nbsp;<CircleX /></button
+			on:click={() => endGame()}
+			disabled={data.turn_started}>{$t('game_page.end_game')}&nbsp;<CircleX /></button
 		>
 	</div>
 </div>

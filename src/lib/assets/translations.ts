@@ -6,7 +6,8 @@ export default {
 		'create_page.create_a_new_game': 'Create a new game',
 		'create_page.create_game': 'Create game',
 		'create_page.failed_to_read_file': 'Failed to read file.',
-		'create_page.file_extension_error': 'Only .csv files are allowed. You uploaded a .{{extension}} file.',
+		'create_page.file_extension_error':
+			'Only .csv files are allowed. You uploaded a .{{extension}} file.',
 		'create_page.file_is_empty': 'File is empty.',
 		'create_page.file_of_words': 'File of words',
 		'create_page.go_to_game': 'Go to game',
@@ -53,7 +54,8 @@ export default {
 		'error_page.something_wrong_happened': 'tapahtui jotain vikaa',
 		'game_page.current_score': 'Nykyinen pistemäärä',
 		'game_page.end_game': 'Lopeta peli',
-		'game_page.failed_to_fetch_game_result': 'Pelin tuloksen hakeminen epäonnistui. Virhe: {{error}}',
+		'game_page.failed_to_fetch_game_result':
+			'Pelin tuloksen hakeminen epäonnistui. Virhe: {{error}}',
 		'game_page.failed_to_load_words': 'Sanojen lataaminen palvelimelta epäonnistui.',
 		'game_page.game_out_of_words': 'Peli loppui sanoihin ja päättyy nyt.',
 		'game_page.guess_the_word': 'Arvaa sana',
@@ -63,7 +65,8 @@ export default {
 		'game_page.start_turn': 'Aloita vuoro',
 		'game_page.team': 'Joukkue',
 		'create_page.failed_to_read_file': 'Tiedoston lukeminen epäonnistui.',
-		'create_page.file_extension_error': 'Vain .csv-tiedostot ovat sallittuja. Lataamasi tiedosto oli .{{extension}}.',
+		'create_page.file_extension_error':
+			'Vain .csv-tiedostot ovat sallittuja. Lataamasi tiedosto oli .{{extension}}.',
 		'create_page.file_is_empty': 'Tiedosto on tyhjä.',
 		'create_page.file_of_words': 'Sanatiedosto',
 		'create_page.go_to_game': 'Mene peliin',
@@ -106,7 +109,8 @@ export default {
 		'game_page.start_turn': 'Börja tur',
 		'game_page.team': 'Lag',
 		'create_page.failed_to_read_file': 'Misslyckades att läsa filen.',
-		'create_page.file_extension_error': 'Endast .csv-filer är tillåtna. Du laddade upp en .{{extension}} fil.',
+		'create_page.file_extension_error':
+			'Endast .csv-filer är tillåtna. Du laddade upp en .{{extension}} fil.',
 		'create_page.file_is_empty': 'Filen är tom.',
 		'create_page.file_of_words': 'Ordfil',
 		'create_page.go_to_game': 'Gå till spelet',

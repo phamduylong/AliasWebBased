@@ -4,5 +4,9 @@ declare global {
 		interface Locals {
 			pocketBase: PocketBase;
 		}
+
+		interface Error {
+			message: string;
+		}
 	}
 }

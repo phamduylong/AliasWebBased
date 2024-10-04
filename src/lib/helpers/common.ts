@@ -64,4 +64,12 @@ export function validateGame(game: Game): string[] {
 	return erroneousMessages;
 }
 
-export default { shuffleArray, validateGame };
+/**
+ * Generates a UID of length 16-17
+ * @see https://stackoverflow.com/a/53116778/14126819
+ */
+export function uid() : string {
+	return Date.now().toString(36) + Math.random().toString(36).substring(2);
+}
+
+export default { shuffleArray, validateGame, uid };

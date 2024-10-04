@@ -1,14 +1,13 @@
 import { error } from '@sveltejs/kit';
-import { randomUUID } from 'crypto';
+import { uid } from '$lib/helpers/common';
 import type { Game, Word } from '$lib/types';
 import { validateGame } from '$lib/helpers/common';
 import { ClientResponseError } from 'pocketbase';
 export const actions = {
 	default: async ({ locals, request }) => {
-		const gameId = randomUUID();
-		try {
-			const formData = await request.formData();
-			let words: string[] = JSON.parse(formData.get('words') as string);
+		const gameId : string = uid();
+			const formData : FormData = await request.formData();
+			let words: string[] = JSON.parse(formData.get('words') as string || "[]");
 			const wordsArr: Word[] = [];
 			// make it a unique Set and then convert it back to an array. This prevents duplicate words to be included in the game.
 			words = [...new Set(words)];
@@ -29,24 +28,14 @@ export const actions = {
 				turn_started: false
 			};
 
-			const errors = validateGame(newGame);
+			const errors : string[] = validateGame(newGame);
 			if (errors.length !== 0) {
 				throw error(400, errors.join(', '));
 			}
 			const gamesCollection = locals.pocketBase.collection('games');
 			// @ts-ignore
 			await gamesCollection.create<Game>(newGame);
-		} catch (err) {
-			console.error(err);
-			if (err instanceof ClientResponseError) {
-				throw error(
-					err.response.code,
-					err.response.message ||
-						'Unknown error occurred. Check the server logs for more information.'
-				);
-			}
-			throw error(500, (err as Error).message || err?.body?.message);
-		}
+
 		return { success: true, gameId: gameId };
 	}
 };

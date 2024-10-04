@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getToastStore } from '@skeletonlabs/skeleton';
-	import { t, locale } from '$lib/i18n';
+	import { t } from '$lib/i18n';
 	const toastStore = getToastStore();
 	let gameCode = '';
 	$: gameCodeEmpty = gameCode === '';
@@ -10,7 +10,7 @@
 	 * @returns {boolean} true if the string is a valid HTTP URL, false otherwise
 	 * @see https://stackoverflow.com/a/43467144/14126819
 	 */
-	const isValidHttpUrl = (str : string) : boolean => {
+	const isValidHttpUrl = (str: string): boolean => {
 		let url;
 		try {
 			url = new URL(str);
@@ -22,7 +22,7 @@
 
 	let redirectUrl = '';
 	// Let's account if the user enters the whole URL instead of a game code
-	const gameCodeChange : Function = () => {
+	const gameCodeChange: Function = () => {
 		if (!isValidHttpUrl(gameCode)) {
 			// hopefully this is the game code alone, but I can't prevent user from doing stupid things
 			redirectUrl = gameCode;
@@ -30,7 +30,7 @@
 			const url = new URL(gameCode);
 			// I don't want users to go to external sites
 			if (url.origin === window.location.origin) {
-				redirectUrl = url.pathname.split('/').pop() || "";
+				redirectUrl = url.pathname.split('/').pop() || '';
 			} else {
 				redirectUrl = '';
 				const toast = {

@@ -3,8 +3,6 @@
 	import { ProgressRadial, getToastStore, getModalStore, popup } from '@skeletonlabs/skeleton';
 	import type { ModalSettings, PopupSettings, ToastSettings } from '@skeletonlabs/skeleton';
 	import type { Game, Word } from '$lib/types';
-	import { page } from '$app/stores';
-	import type { MouseEventHandler } from 'svelte/elements';
 	import { CircleChevronDown, CircleX } from 'lucide-svelte';
 	import { pb } from '$lib/pocketbase';
 	import { onMount } from 'svelte';
@@ -60,7 +58,7 @@
 		}
 	};
 
-	const startTurn: MouseEventHandler<HTMLButtonElement> = async () => {
+	const startTurn = async () => {
 		if (!data.words || data.words.length === 0) {
 			const t = {
 				message: $t('game_page.failed_to_load_words'),
@@ -104,7 +102,7 @@
 	};
 
 	const updateToDatabase: Function = async (): Promise<void> => {
-		await fetch(`${$page.params.gameid}/`, {
+		await fetch('/game', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -119,7 +117,7 @@
 		// clear the interval if the game was ended before the timer ran out
 		clearInterval(gameClockTimerInterval);
 		await updateToDatabase();
-		fetch(`${window.location.origin}/result/${$page.params.gameid}/`)
+		fetch(`${window.location.origin}/results?gameId=${data.game_id}`)
 			.then((res) => res.json())
 			.then((res) => {
 				const modal: ModalSettings = {
@@ -208,12 +206,12 @@
 
 	<!-- Score Banner (lg - xl) -->
 	<div
-		class="collapse md:visible card card-hover variant-soft-secondary md:w-80 lg:w-96 min-w-fit relative left-1/2 -translate-x-1/2 flex justify-center select-none p-2 m-4 divide-x-2"
+		class="collapse md:visible card card-hover variant-soft-secondary md:w-80 lg:w-96 min-w-fit relative left-1/2 -translate-x-1/2 flex justify-center select-none py-2 m-4 divide-x-2"
 	>
-		<span class="w-1/2 min-w-fit max-w-1/2 flex text-center justify-center items-center"
+		<span class="w-1/2 flex text-center justify-center items-center px-2"
 			>{$t('game_page.team')} {data.team1}: {data.team1_score}</span
 		>
-		<span class="w-1/2 min-w-fit max-w-1/2 flex text-center justify-center items-center"
+		<span class="w-1/2 flex text-center justify-center items-center px-2"
 			>{$t('game_page.team')} {data.team2}: {data.team2_score}</span
 		>
 	</div>
@@ -245,7 +243,7 @@
 	</h3>
 	<button
 		class="btn variant-filled top-[67.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 absolute font-bold"
-		on:click={startTurn}
+		on:click={() => startTurn()}
 		disabled={data.turn_started}>{$t('game_page.start_turn')}</button
 	>
 {:else}

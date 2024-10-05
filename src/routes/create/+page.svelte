@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { getToastStore, type ToastSettings, clipboard } from '@skeletonlabs/skeleton';
+	import { getToastStore, clipboard } from '@skeletonlabs/skeleton';
+	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import { Clipboard, ArrowRightCircle } from 'lucide-svelte';
-	import type { ActionData } from './$types';
 	import { t } from '$lib/i18n';
 	import { browser } from '$app/environment';
-	export let form: ActionData;
+	export let form;
 	let gameCode: string, team1: string, team2: string;
 	let files: FileList;
 	let words: string;
@@ -89,7 +89,7 @@
 	<title>{$t('create_page.create_a_new_game')}</title>
 </svelte:head>
 
-{#if form?.success}
+{#if form && form.success}
 	<!-- Game was created successfully, let's show users how to share the game -->
 	<h1 class="h1 text-center mt-12 mx-4 md:mt-20 font-bold">{$t('create_page.copy_game_url')}</h1>
 	<h3 class="h3 text-center mt-12 mx-4 md:mt-20 font-bold">
@@ -103,19 +103,19 @@
 			class="input"
 			type="text"
 			readonly={true}
-			value="{browser ? window.location.origin : ''}/game/{form?.gameId}"
+			value="{browser ? window.location.origin : ''}/game?gameId={form?.gameId}"
 			data-clipboard="gameURL"
 		/>
 		<button
 			title={$t('create_page.copy_game_url')}
 			use:clipboard={{ input: 'gameURL' }}
-			class="btn variant-filled"
-			><p class="font-bold">{$t('create_page.copy')}</p>
+			class="btn variant-filled font-bold"
+			>{$t('create_page.copy')}
 			<Clipboard /></button
 		>
 	</div>
 	<a
-		href="/game/{form?.gameId}"
+		href="/game?gameId={form.gameId}"
 		class="btn variant-filled relative left-1/2 -translate-x-1/2 top-[25%]"
 	>
 		<span class="font-bold">{$t('create_page.go_to_game')}</span>
@@ -154,7 +154,14 @@
 		</label>
 		<label class="label my-2 w-full">
 			<span class="required">{$t('create_page.file_of_words')}</span>
-			<input class="input" type="file" bind:files accept=".csv" on:change={onFileUpload} required />
+			<input
+				class="input"
+				type="file"
+				bind:files
+				accept=".csv"
+				on:change={(e) => onFileUpload(e)}
+				required
+			/>
 		</label>
 
 		<!-- A hack to get words to form data -->

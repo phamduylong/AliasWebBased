@@ -56,10 +56,10 @@
 		class="input w-3/4 my-4"
 		placeholder={$t('index_page.enter_game_code')}
 		bind:value={gameCode}
-		on:input={gameCodeChange}
+		on:input={() => gameCodeChange()}
 	/>
 	<a
-		href={gameCodeEmpty ? '' : `/game/${redirectUrl}`}
+		href={gameCodeEmpty ? '' : `/game?gameId=${redirectUrl}`}
 		data-sveltekit-preload-data="hover"
 		class="w-3/4 my-4"
 		><button

@@ -26,7 +26,7 @@
 <div class="select-none p-10">
 	<h1 class="h1 my-10">
 		{emotes[Math.floor(Math.random() * emotes.length)]}
-		{$t('something_wrong_happened')}...
+		{$t('error_page.something_wrong_happened')}...
 	</h1>
 	<h1 class="h1 my-10">{$t('error_page.error', { error: $page.error?.message })}</h1>
 </div>

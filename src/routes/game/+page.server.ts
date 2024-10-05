@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Game } from '$lib/types';
-export const load = (async ({ locals, params }) => {
-	const gameId: string = params.gameid || '';
+export const load: PageServerLoad = (async ({ locals, url }) => {
+	const gameId: string = url.searchParams.get('gameId') || '';
 	const gamesCollection = locals.pocketBase.collection('games');
 	if (!gamesCollection) {
 		throw error(500, 'Database failure: Games collection is missing from database.');

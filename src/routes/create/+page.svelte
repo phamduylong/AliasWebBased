@@ -9,14 +9,14 @@
 	let files: FileList;
 	let words: string;
 	const toastStore = getToastStore();
-	let useDefaultWordFile = true;
+	let useDefaultWordFile = false;
 	/**
 	 * A bit of a dirty hack to get the words into a hidden input field and into the form data to send to the server.
 	 * @param e
 	 */
 	const onFileUpload = async (e: Event): Promise<void> => {
 		try {
-			const files = (e.target as HTMLInputElement).files;
+			const files = (<HTMLInputElement> e.target).files;
 			if (files) {
 				const file = files[0];
 				if (!file) {
@@ -32,7 +32,7 @@
 			}
 		} catch (err) {
 			const t: ToastSettings = {
-				message: (err as Error).message || $t('create_page.failed_to_read_file'),
+				message: (<Error> err).message || $t('create_page.failed_to_read_file'),
 				timeout: 4000,
 				background: 'variant-filled-error'
 			};
@@ -85,10 +85,11 @@
 			words = JSON.stringify(await parseCSV(fileFromWords));
 		}).catch(err => {
 			const toast : ToastSettings = {
-				message: (err as Error).message || $t('create_page.failed_to_read_file'),
+				message: (<Error> err).message || $t('create_page.failed_to_read_file'),
 				timeout: 4000,
 				background: 'variant-filled-error'
 			}
+			toastStore.trigger(toast);
 		});
 	}
 </script>
@@ -176,12 +177,12 @@
 			size='sm'
 			name="useDefaultWords"
 			bind:checked={useDefaultWordFile}
-			on:change={() => fetchDefaultWords()}
+			on:change={() => {if(useDefaultWordFile) fetchDefaultWords();}}
 		>{$t('create_page.use_default_words')}</SlideToggle
 		>
 	</label>
 		<label class="label my-2 w-full">
-			<span class="{!useDefaultWordFile ? "required" : ''}">{$t('create_page.file_of_words')}</span>
+			<span class="{useDefaultWordFile ? '' : 'required'}">{$t('create_page.file_of_words')}</span>
 			<input
 				class="input"
 				type="file"

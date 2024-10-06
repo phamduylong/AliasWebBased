@@ -49,7 +49,7 @@
 	<title>Alias Web Game</title>
 </svelte:head>
 <div
-	class="card card-hover relative top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center w-3/4 lg:w-1/4 p-4 lg:p-10 my-10 lg:m-0"
+	class="card card-hover relative top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center w-3/4 lg:w-1/4 p-4 lg:p-8 my-10 lg:m-0"
 >
 	<input
 		type="text"
@@ -61,7 +61,7 @@
 	<a
 		href={gameCodeEmpty ? '' : `/game?gameId=${redirectUrl}`}
 		data-sveltekit-preload-data="hover"
-		class="w-3/4 my-4"
+		class="w-3/4 my-4 flex justify-center"
 		><button
 			class="btn variant-filled w-full"
 			disabled={gameCodeEmpty}
@@ -69,7 +69,7 @@
 			>{$t('index_page.join_game')}</button
 		></a
 	>
-	<a href="/create" data-sveltekit-preload-data="hover" class="w-3/4 my-4"
-		><button class="btn variant-filled w-full">{$t('index_page.create_game')}</button></a
+	<a href="/create" data-sveltekit-preload-data="hover" class="w-3/4 anchor text-center mt-4"
+		>{$t('index_page.create_game')}</a
 	>
 </div>

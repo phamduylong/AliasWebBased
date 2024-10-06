@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { getToastStore, clipboard } from '@skeletonlabs/skeleton';
+	import { getToastStore, clipboard, SlideToggle } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import { Clipboard, ArrowRightCircle } from 'lucide-svelte';
 	import { t } from '$lib/i18n';
 	import { browser } from '$app/environment';
 	export let form;
-	let gameCode: string, team1: string, team2: string;
+	let team1: string = '', team2: string = '';
 	let files: FileList;
 	let words: string;
 	const toastStore = getToastStore();
-
+	let useDefaultWordFile = true;
 	/**
 	 * A bit of a dirty hack to get the words into a hidden input field and into the form data to send to the server.
 	 * @param e
@@ -39,13 +39,7 @@
 			toastStore.trigger(t);
 		}
 	};
-	$: allFieldsFilled =
-		gameCode !== '' &&
-		team1 !== '' &&
-		team2 !== '' &&
-		files?.length === 1 &&
-		files[0].name.endsWith('.csv') &&
-		files[0].size > 0;
+	$: allFieldsFilled = team1 && team1 !== '' && team2 && team2 !== '' && (useDefaultWordFile || (files && files.length === 1 && files[0].name.endsWith('.csv') && files[0].size > 0));
 
 	/**
 	 * Parse the CSV file and return the words in an array.
@@ -59,21 +53,21 @@
 				const reader = new FileReader();
 				reader.readAsText(file, 'latin1');
 				reader.onload = () => {
-					const text = reader.result as string;
+					const text = String(reader.result);
 					if (!text) {
 						reject(new Error($t('create_page.file_is_empty')));
 					}
 					const lines = text.split('\n');
-					const words: string[] = [];
+					const tmpWords: string[] = [];
 					lines.forEach((line) => {
 						if (line !== '') {
 							const wordsInLine = line.split(';');
 							wordsInLine.forEach((word) => {
-								words.push(word.replace('\r', ''));
+								tmpWords.push(word.replace('\r', ''));
 							});
 						}
 					});
-					resolve(words);
+					resolve(tmpWords);
 				};
 				reader.onerror = () => {
 					reject(new Error($t('create_page.failed_to_read_file')));
@@ -83,6 +77,20 @@
 			}
 		});
 	};
+
+	const fetchDefaultWords = async () => {
+		await fetch('/words_version6.csv').then(res => res.blob()).then(async blobData => {
+			// See https://stackoverflow.com/a/27256755/14126819
+			const fileFromWords = new File([blobData], "words_version6.csv");
+			words = JSON.stringify(await parseCSV(fileFromWords));
+		}).catch(err => {
+			const toast : ToastSettings = {
+				message: (err as Error).message || $t('create_page.failed_to_read_file'),
+				timeout: 4000,
+				background: 'variant-filled-error'
+			}
+		});
+	}
 </script>
 
 <svelte:head>
@@ -109,6 +117,14 @@
 		<button
 			title={$t('create_page.copy_game_url')}
 			use:clipboard={{ input: 'gameURL' }}
+			on:click={() => {
+				const toast = {
+					message: $t('create_page.game_code_copied'),
+					timeout: 4000,
+					background: 'variant-filled-success'
+				};
+				toastStore.trigger(toast);
+			}}
 			class="btn variant-filled font-bold"
 			>{$t('create_page.copy')}
 			<Clipboard /></button
@@ -125,7 +141,7 @@
 	<!-- Form to create a new game -->
 	<h1 class="h1 text-center mt-12 md:mt-20 font-bold">{$t('create_page.create_a_new_game')}</h1>
 	<form
-		class="card relative top-[37.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center w-4/5 md:w-1/3 p-4 md:p-10 md:m-0"
+		class="card relative top-[37.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center w-4/5 md:w-1/2 lg:w-1/3 p-4 md:p-10 md:m-0"
 		method="POST"
 	>
 		<label class="label my-2 w-full">
@@ -153,7 +169,19 @@
 			/>
 		</label>
 		<label class="label my-2 w-full">
-			<span class="required">{$t('create_page.file_of_words')}</span>
+		<input class="hidden">
+		<SlideToggle
+			class="my-2 float-left"
+			active="bg-primary-500"
+			size='sm'
+			name="useDefaultWords"
+			bind:checked={useDefaultWordFile}
+			on:change={() => fetchDefaultWords()}
+		>{$t('create_page.use_default_words')}</SlideToggle
+		>
+	</label>
+		<label class="label my-2 w-full">
+			<span class="{!useDefaultWordFile ? "required" : ''}">{$t('create_page.file_of_words')}</span>
 			<input
 				class="input"
 				type="file"
@@ -161,6 +189,7 @@
 				accept=".csv"
 				on:change={(e) => onFileUpload(e)}
 				required
+				disabled={useDefaultWordFile}
 			/>
 		</label>
 

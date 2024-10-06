@@ -109,6 +109,14 @@
 		<button
 			title={$t('create_page.copy_game_url')}
 			use:clipboard={{ input: 'gameURL' }}
+			on:click={() => {
+				const toast = {
+					message: $t('create_page.game_code_copied'),
+					timeout: 4000,
+					background: 'variant-filled-success'
+				};
+				toastStore.trigger(toast);
+			}}
 			class="btn variant-filled font-bold"
 			>{$t('create_page.copy')}
 			<Clipboard /></button

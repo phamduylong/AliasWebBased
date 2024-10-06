@@ -6,7 +6,7 @@ export const actions = {
 	default: async ({ locals, request }) => {
 		const gameId: string = uid();
 		const formData: FormData = await request.formData();
-		let words: string[] = JSON.parse((formData.get('words') as string) || '[]');
+		let words: string[] = JSON.parse(String(formData.get('words')) || '[]');
 		const wordsArr: Word[] = [];
 		// make it a unique Set and then convert it back to an array. This prevents duplicate words to be included in the game.
 		words = [...new Set(words)];
@@ -18,8 +18,8 @@ export const actions = {
 		const newGame: Game = {
 			id: '',
 			game_id: gameId,
-			team1: formData.get('team-1') as string,
-			team2: formData.get('team-2') as string,
+			team1: String(formData.get('team-1')) || "",
+			team2: String(formData.get('team-2')) || "",
 			team1_score: 0,
 			team2_score: 0,
 			words: wordsArr,

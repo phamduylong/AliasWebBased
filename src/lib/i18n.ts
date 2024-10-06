@@ -8,7 +8,7 @@ const locales = Object.keys(translations);
 
 if (browser) {
 	const storedOrPreferredLocale =
-		(localStorage.getItem('locale') as Locale) || navigator.language.split('-')[0] || 'fi';
+		(<Locale> localStorage.getItem('locale')) || navigator.language.split('-')[0] || 'fi';
 	localStorage.setItem('locale', storedOrPreferredLocale);
 	locale.set(storedOrPreferredLocale);
 }

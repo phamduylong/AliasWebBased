@@ -33,8 +33,8 @@ export const actions = {
 		}
 		const gamesCollection = locals.pocketBase.collection('games');
 		// @ts-ignore
-		await gamesCollection.create<Game>(newGame);
+		const createdGame = await gamesCollection.create<Game>(newGame);
 
-		return { success: true, gameId: gameId };
+		return { success: true, gameId: createdGame.game_id };
 	}
 };

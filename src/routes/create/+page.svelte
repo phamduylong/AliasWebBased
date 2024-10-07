@@ -79,6 +79,7 @@
 	};
 
 	const fetchDefaultWords = async () => {
+		// TODO: think of a better way to do this, maybe having the file URL customizable so that modifications are easier
 		await fetch('/words_version6.csv').then(res => res.blob()).then(async blobData => {
 			// See https://stackoverflow.com/a/27256755/14126819
 			const fileFromWords = new File([blobData], "words_version6.csv");

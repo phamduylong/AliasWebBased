@@ -48,8 +48,9 @@
 <svelte:head>
 	<title>Alias Web Game</title>
 </svelte:head>
+<h1 class="h1 text-center mt-20 md:mt-28 font-bold select-none">Alias Web Game</h1>
 <div
-	class="card card-hover relative top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center w-3/4 lg:w-1/4 p-4 lg:p-8 my-10 lg:m-0"
+	class="card card-hover relative top-[22.5%] lg:top-[27.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center items-center w-3/4 md:w-1/2 lg:w-1/4 p-4 lg:p-8 my-10 lg:m-0"
 >
 	<input
 		type="text"

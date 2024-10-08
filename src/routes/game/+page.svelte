@@ -48,24 +48,24 @@
 			gameStarted = false;
 			data.turn_started = false;
 			clearInterval(gameClockTimerInterval);
-			const t = {
+			const toast =  {
 				message: $t('game_page.game_out_of_words'),
 				timeout: 4000,
 				background: 'variant-filled-primary'
 			};
-			toastStore.trigger(t);
+			toastStore.trigger(toast);
 			setTimeout(async () => await endGame(), 5000);
 		}
 	};
 
 	const startTurn = async () => {
 		if (!data.words || data.words.length === 0) {
-			const t = {
+			const toast =  {
 				message: $t('game_page.failed_to_load_words'),
 				timeout: 4000,
 				background: 'variant-filled-error'
 			};
-			toastStore.trigger(t);
+			toastStore.trigger(toast);
 			return;
 		}
 		shuffleArray(data.words);
@@ -74,12 +74,12 @@
 			gameStarted = false;
 			data.turn_started = false;
 			clearInterval(gameClockTimerInterval);
-			const t = {
+			const toast =  {
 				message: $t('game_page.game_out_of_words'),
 				timeout: 4000,
 				background: 'variant-filled-primary'
 			};
-			toastStore.trigger(t);
+			toastStore.trigger(toast);
 			setTimeout(async () => await endGame(), 5000);
 			return;
 		}
@@ -228,18 +228,15 @@
 
 {#if !gameStarted}
 	<h1
-		class="h1 my-10 text-center absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-max p-5"
-	>
-		<b class="select-none">{$t('game_page.team')} {data.is_team1_turn ? data.team1 : data.team2}</b>
+		class="h1 my-10 text-center absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-max p-5 select-none font-bold"
+	>{$t('game_page.team')} {data.is_team1_turn ? data.team1 : data.team2}
 	</h1>
 	<h3
-		class="select-none h3 my-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-max p-5"
+		class="h3 my-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-max p-5 select-none font-bold"
 	>
-		<b class="select-none"
-			>{$t('game_page.current_score')}: {data.is_team1_turn
+			{$t('game_page.current_score')}: {data.is_team1_turn
 				? data.team1_score
-				: data.team2_score}</b
-		>
+				: data.team2_score}
 	</h3>
 	<button
 		class="btn variant-filled top-[67.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 absolute font-bold"
@@ -247,12 +244,11 @@
 		disabled={data.turn_started}>{$t('game_page.start_turn')}</button
 	>
 {:else}
-	<h3 class="h3 mt-5 md:mt-20 flex justify-center items-center flex-col p-5">
-		<b
-			>{$t('game_page.current_score')}: {data.is_team1_turn
+	<h3 class="h3 mt-5 md:mt-20 flex justify-center items-center flex-col p-5 font-bold">
+{$t('game_page.current_score')}: {data.is_team1_turn
 				? data.team1_score
-				: data.team2_score}</b
-		>
+				: data.team2_score}
+		
 	</h3>
 	<div class="my-2 md:my-5 flex justify-center items-center flex-col">
 		<ProgressRadial
@@ -262,8 +258,8 @@
 			strokeLinecap="round"
 			value={(timer / 60) * 100}>{timer}</ProgressRadial
 		>
-		<h1 class="h1 my-2 md:my-5 text-center flex justify-center items-center flex-col p-5">
-			<b>{currWord ? currWord.word : ''}</b>
+		<h1 class="h1 my-2 md:my-5 text-center flex justify-center items-center flex-col p-5 font-bold">
+			{currWord ? currWord.word : ''}
 		</h1>
 		<div class="inline my-2 md:my-5">
 			<button

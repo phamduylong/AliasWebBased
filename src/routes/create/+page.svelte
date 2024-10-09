@@ -5,7 +5,8 @@
 	import { t } from '$lib/i18n';
 	import { browser } from '$app/environment';
 	export let form;
-	let team1: string = '', team2: string = '';
+	let team1: string = '',
+		team2: string = '';
 	let files: FileList;
 	let words: string;
 	const toastStore = getToastStore();
@@ -16,7 +17,7 @@
 	 */
 	const onFileUpload = async (e: Event): Promise<void> => {
 		try {
-			const files = (<HTMLInputElement> e.target).files;
+			const files = (<HTMLInputElement>e.target).files;
 			if (files) {
 				const file = files[0];
 				if (!file) {
@@ -32,14 +33,20 @@
 			}
 		} catch (err) {
 			const t: ToastSettings = {
-				message: (<Error> err).message || $t('create_page.failed_to_read_file'),
+				message: (<Error>err).message || $t('create_page.failed_to_read_file'),
 				timeout: 4000,
 				background: 'variant-filled-error'
 			};
 			toastStore.trigger(t);
 		}
 	};
-	$: allFieldsFilled = team1 && team1 !== '' && team2 && team2 !== '' && (useDefaultWordFile || (files && files.length === 1 && files[0].name.endsWith('.csv') && files[0].size > 0));
+	$: allFieldsFilled =
+		team1 &&
+		team1 !== '' &&
+		team2 &&
+		team2 !== '' &&
+		(useDefaultWordFile ||
+			(files && files.length === 1 && files[0].name.endsWith('.csv') && files[0].size > 0));
 
 	/**
 	 * Parse the CSV file and return the words in an array.
@@ -80,19 +87,22 @@
 
 	const fetchDefaultWords = async () => {
 		// TODO: think of a better way to do this, maybe having the file URL customizable so that modifications are easier
-		await fetch('/words_version6.csv').then(res => res.blob()).then(async blobData => {
-			// See https://stackoverflow.com/a/27256755/14126819
-			const fileFromWords = new File([blobData], "words_version6.csv");
-			words = JSON.stringify(await parseCSV(fileFromWords));
-		}).catch(err => {
-			const toast : ToastSettings = {
-				message: (<Error> err).message || $t('create_page.failed_to_read_file'),
-				timeout: 4000,
-				background: 'variant-filled-error'
-			}
-			toastStore.trigger(toast);
-		});
-	}
+		await fetch('/words_version6.csv')
+			.then((res) => res.blob())
+			.then(async (blobData) => {
+				// See https://stackoverflow.com/a/27256755/14126819
+				const fileFromWords = new File([blobData], 'words_version6.csv');
+				words = JSON.stringify(await parseCSV(fileFromWords));
+			})
+			.catch((err) => {
+				const toast: ToastSettings = {
+					message: (<Error>err).message || $t('create_page.failed_to_read_file'),
+					timeout: 4000,
+					background: 'variant-filled-error'
+				};
+				toastStore.trigger(toast);
+			});
+	};
 </script>
 
 <svelte:head>
@@ -171,19 +181,20 @@
 			/>
 		</label>
 		<label class="label my-2 w-full">
-		<input class="hidden">
-		<SlideToggle
-			class="my-2 float-left"
-			active="bg-primary-500"
-			size='sm'
-			name="useDefaultWords"
-			bind:checked={useDefaultWordFile}
-			on:change={() => {if(useDefaultWordFile) fetchDefaultWords();}}
-		>{$t('create_page.use_default_words')}</SlideToggle
-		>
-	</label>
+			<input class="hidden" />
+			<SlideToggle
+				class="my-2 float-left"
+				active="bg-primary-500"
+				size="sm"
+				name="useDefaultWords"
+				bind:checked={useDefaultWordFile}
+				on:change={() => {
+					if (useDefaultWordFile) fetchDefaultWords();
+				}}>{$t('create_page.use_default_words')}</SlideToggle
+			>
+		</label>
 		<label class="label my-2 w-full">
-			<span class="{useDefaultWordFile ? '' : 'required'}">{$t('create_page.file_of_words')}</span>
+			<span class={useDefaultWordFile ? '' : 'required'}>{$t('create_page.file_of_words')}</span>
 			<input
 				class="input"
 				type="file"

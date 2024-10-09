@@ -4,7 +4,7 @@ A quick guide to contributing to this project.
 
 Since this project was written for internal use at [Metropolia UAS](https://www.metropolia.fi/en), I don't expect any
 issues being created here on GitHub unless something terribly wrong happened. In such case, file an issue and tag me. I
-will response at my earliest convenience. 
+will response at my earliest convenience.
 
 ## Update the default set of words
 

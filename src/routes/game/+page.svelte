@@ -48,7 +48,7 @@
 			gameStarted = false;
 			data.turn_started = false;
 			clearInterval(gameClockTimerInterval);
-			const toast =  {
+			const toast = {
 				message: $t('game_page.game_out_of_words'),
 				timeout: 4000,
 				background: 'variant-filled-primary'
@@ -60,7 +60,7 @@
 
 	const startTurn = async () => {
 		if (!data.words || data.words.length === 0) {
-			const toast =  {
+			const toast = {
 				message: $t('game_page.failed_to_load_words'),
 				timeout: 4000,
 				background: 'variant-filled-error'
@@ -74,7 +74,7 @@
 			gameStarted = false;
 			data.turn_started = false;
 			clearInterval(gameClockTimerInterval);
-			const toast =  {
+			const toast = {
 				message: $t('game_page.game_out_of_words'),
 				timeout: 4000,
 				background: 'variant-filled-primary'
@@ -229,14 +229,14 @@
 {#if !gameStarted}
 	<h1
 		class="h1 my-10 text-center absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-max p-5 select-none font-bold"
-	>{$t('game_page.team')} {data.is_team1_turn ? data.team1 : data.team2}
+	>
+		{$t('game_page.team')}
+		{data.is_team1_turn ? data.team1 : data.team2}
 	</h1>
 	<h3
 		class="h3 my-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-max p-5 select-none font-bold"
 	>
-			{$t('game_page.current_score')}: {data.is_team1_turn
-				? data.team1_score
-				: data.team2_score}
+		{$t('game_page.current_score')}: {data.is_team1_turn ? data.team1_score : data.team2_score}
 	</h3>
 	<button
 		class="btn variant-filled top-[67.5%] left-1/2 -translate-x-1/2 -translate-y-1/2 absolute font-bold"
@@ -245,10 +245,7 @@
 	>
 {:else}
 	<h3 class="h3 mt-5 md:mt-20 flex justify-center items-center flex-col p-5 font-bold">
-{$t('game_page.current_score')}: {data.is_team1_turn
-				? data.team1_score
-				: data.team2_score}
-		
+		{$t('game_page.current_score')}: {data.is_team1_turn ? data.team1_score : data.team2_score}
 	</h3>
 	<div class="my-2 md:my-5 flex justify-center items-center flex-col">
 		<ProgressRadial

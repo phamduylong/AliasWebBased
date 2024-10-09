@@ -50,7 +50,8 @@ export default {
 		'create_page.copy_and_share_url': 'Kopioi ja jaa pelin URL pelataksesi kavereiden kanssa',
 		'create_page.copy_game_url': 'Kopioi pelin URL',
 		'create_page.create_a_new_game': 'Luo uusi peli',
-		'create_page.create_game': 'Luo peli',		'create_page.failed_to_read_file': 'Tiedoston lukeminen epäonnistui.',
+		'create_page.create_game': 'Luo peli',
+		'create_page.failed_to_read_file': 'Tiedoston lukeminen epäonnistui.',
 		'create_page.file_extension_error':
 			'Vain .csv-tiedostot ovat sallittuja. Lataamasi tiedosto oli .{{extension}}.',
 		'create_page.file_is_empty': 'Tiedosto on tyhjä.',

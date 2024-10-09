@@ -67,7 +67,7 @@
 
 	onMount(() => {
 		if (browser) {
-			const storedLocale = <Locale> localStorage.getItem('locale');
+			const storedLocale = <Locale>localStorage.getItem('locale');
 			if (storedLocale) $locale = storedLocale;
 		}
 	});

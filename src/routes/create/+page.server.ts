@@ -18,8 +18,8 @@ export const actions = {
 		const newGame: Game = {
 			id: '',
 			game_id: gameId,
-			team1: String(formData.get('team-1')) || "",
-			team2: String(formData.get('team-2')) || "",
+			team1: String(formData.get('team-1')) || '',
+			team2: String(formData.get('team-2')) || '',
 			team1_score: 0,
 			team2_score: 0,
 			words: wordsArr,

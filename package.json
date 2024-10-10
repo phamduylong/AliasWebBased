@@ -8,11 +8,9 @@
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test": "npm run test:integration && npm run test:unit",
+		"test": "playwright test",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write .",
-		"test:integration": "playwright test",
-		"test:unit": "vitest"
+		"format": "prettier --write ."
 	},
 	"devDependencies": {
 		"@babel/eslint-parser": "^7.25.7",

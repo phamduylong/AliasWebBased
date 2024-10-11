@@ -30,7 +30,7 @@
 			const url = new URL(gameCode);
 			// I don't want users to go to external sites
 			if (url.origin === window.location.origin) {
-				redirectUrl = url.pathname.split('/').pop() || '';
+				redirectUrl = url.searchParams.get("gameId") ?? 'game-code-not-found';
 			} else {
 				redirectUrl = '';
 				const toast = {

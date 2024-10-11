@@ -150,7 +150,7 @@
 											class="option w-full h-full"
 											type="submit"
 											name="theme"
-											title="{name}"
+											title={name}
 											value={localeCode}
 											on:click={() => {
 												if (browser) localStorage.setItem('locale', localeCode);

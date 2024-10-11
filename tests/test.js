@@ -30,7 +30,9 @@ test.describe('Header bar functionalities', () => {
 		await expect(modeSwitch).toBeVisible();
 		if (await modeSwitch.isChecked()) {
 			await modeSwitch.uncheck();
-			expect(await page.evaluate(() => window.localStorage.getItem('modeCurrent'))).toEqual('false');
+			expect(await page.evaluate(() => window.localStorage.getItem('modeCurrent'))).toEqual(
+				'false'
+			);
 			expect(await page.evaluate(() => window.localStorage.getItem('modeUserPrefers'))).toEqual(
 				'false'
 			);
@@ -57,7 +59,9 @@ test.describe('Header bar functionalities', () => {
 			const themeButton = page.getByRole('button', { name: theme });
 			await expect(themeButton).toBeVisible();
 			await themeButton.click();
-			const themeCookie = (await page.context().cookies()).find((cookie) => cookie.name === 'theme');
+			const themeCookie = (await page.context().cookies()).find(
+				(cookie) => cookie.name === 'theme'
+			);
 			expect(themeCookie).toBeTruthy();
 			expect(themeCookie?.value.toLowerCase()).toEqual(theme.toLowerCase().replace(' ', '-'));
 		}

@@ -1,15 +1,33 @@
 import { expect, test } from '@playwright/test';
 
-test('Index page layout should have elements visible', async ({ page }) => {
-	await page.goto('/');
-	await expect(page.getByRole('heading', { name: 'Alias Web Game' })).toBeVisible();
-	await expect(page).toHaveTitle('Alias Web Game');
-	const gameCodeInput = page.getByPlaceholder('Enter game code');
-	await expect(gameCodeInput).toBeVisible();
-	await expect(gameCodeInput).toBeEditable();
-	await expect(gameCodeInput).toHaveAttribute('type', 'text');
-	await expect(page.getByRole('button', { name: 'Join game' })).toBeVisible();
-	await expect(page.getByRole('link', { name: 'Create a new game' })).toBeVisible();
+test.describe('Index page', () => {
+	test('Index page layout should have elements visible', async ({ page }) => {
+		await page.goto('/');
+		await expect(page.getByRole('heading', { name: 'Alias Web Game' })).toBeVisible();
+		await expect(page).toHaveTitle('Alias Web Game');
+		const gameCodeInput = page.getByPlaceholder('Enter game code');
+		await expect(gameCodeInput).toBeVisible();
+		await expect(gameCodeInput).toBeEditable();
+		await expect(gameCodeInput).toHaveAttribute('type', 'text');
+		await expect(page.getByRole('button', { name: 'Join game' })).toBeVisible();
+		await expect(page.getByRole('link', { name: 'Create a new game' })).toBeVisible();
+	});
+
+	test('Join game button should redirect to game page', async ({ page }) => {
+		await page.goto('/');
+		await page.fill('input[placeholder="Enter game code"]', '123456');
+		await expect(page.locator('text=Join game')).toBeEnabled();
+		await page.locator('text=Join game').click();
+		await page.waitForURL('**/game?gameId=123456');
+		expect(page.url()).toContain('/game?gameId=123456');
+	});
+
+	test('Create game link should redirect to create game page', async ({ page }) => {
+		await page.goto('/');
+		await page.locator('text=Create a new game').click();
+		await page.waitForURL('**/create');
+		expect(page.url()).toContain('/create');
+	});
 });
 
 test.describe('Header bar functionalities', () => {

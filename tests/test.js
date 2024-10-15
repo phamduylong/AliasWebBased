@@ -1,8 +1,11 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Layout header functionalities', () => {
-	test('Header banner elements should exist', async ({ page }) => {
+	test.beforeEach(async ({ page }) => {
 		await page.goto('/');
+	});
+
+	test('Header banner elements should exist', async ({ page }) => {
 		await expect(page.getByRole('heading', { name: 'Alias Web Game' })).toBeVisible();
 		await expect(page.getByRole('button', { name: 'Theme' })).toBeVisible();
 		await expect(page.getByRole('button', { name: 'Language' })).toBeVisible();
@@ -10,7 +13,6 @@ test.describe('Layout header functionalities', () => {
 	});
 
 	test('Theme dropdown functions correctly', async ({ page }) => {
-		await page.goto('/');
 		const themeButton = page.getByRole('button', { name: 'Theme' });
 		await expect(themeButton).toBeVisible();
 		await themeButton.click();
@@ -56,7 +58,6 @@ test.describe('Layout header functionalities', () => {
 	});
 
 	test('Language dropdown functions correctly', async ({ page }) => {
-		await page.goto('/');
 		const langButton = page.getByRole('button', { name: 'Language' });
 		await expect(langButton).toBeVisible();
 		await langButton.click();
@@ -94,8 +95,11 @@ test.describe('Layout header functionalities', () => {
 });
 
 test.describe('Index page', () => {
-	test('Index page layout should have elements visible', async ({ page }) => {
+	test.beforeEach(async ({ page }) => {
 		await page.goto('/');
+	});
+
+	test('Index page layout should have elements visible', async ({ page }) => {
 		await expect(page.getByRole('heading', { name: 'Alias Web Game' })).toBeVisible();
 		await expect(page).toHaveTitle('Alias Web Game');
 		const gameCodeInput = page.getByPlaceholder('Enter game code');
@@ -107,7 +111,6 @@ test.describe('Index page', () => {
 	});
 
 	test('Join game button should redirect to game page', async ({ page }) => {
-		await page.goto('/');
 		await page.fill('input[placeholder="Enter game code"]', '123456');
 		await expect(page.locator('text=Join game')).toBeEnabled();
 		await page.locator('text=Join game').click();
@@ -116,7 +119,6 @@ test.describe('Index page', () => {
 	});
 
 	test('Create game link should redirect to create game page', async ({ page }) => {
-		await page.goto('/');
 		await page.locator('text=Create a new game').click();
 		await page.waitForURL('**/create');
 		expect(page.url()).toContain('/create');
@@ -124,8 +126,12 @@ test.describe('Index page', () => {
 });
 
 test.describe('Create game page', () => {
-	test('Create game page layout should have elements visible', async ({ page }) => {
+
+	test.beforeEach(async ({ page }) => {
 		await page.goto('/create');
+	});
+
+	test('Create game page layout should have elements visible', async ({ page }) => {
 		await expect(page.getByRole('heading', { name: 'Create a new game' })).toBeVisible();
 		await expect(page).toHaveTitle('Create a new game');
 
@@ -152,7 +158,6 @@ test.describe('Create game page', () => {
 	});
 
 	test('Intermediate page UI to be visible', async ({ page }) => {
-		await page.goto('/create');
 		await page.fill('input[placeholder="Name of team 1 (max 16 characters)"]', 'Clippers');
 		await page.fill('input[placeholder="Name of team 2 (max 16 characters)"]', 'Lakers');
 		const useDefaultWordsSwitch = page.getByRole('switch', { name: 'Use default set of words' });
@@ -173,7 +178,6 @@ test.describe('Create game page', () => {
 	});
 
 	test('Go to game button should redirect to game page', async ({ page }) => {
-		await page.goto('/create');
 		await page.fill('input[placeholder="Name of team 1 (max 16 characters)"]', 'Clippers');
 		await page.fill('input[placeholder="Name of team 2 (max 16 characters)"]', 'Lakers');
 		const useDefaultWordsSwitch = page.getByRole('switch', { name: 'Use default set of words' });

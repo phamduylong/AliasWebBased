@@ -77,11 +77,12 @@ test.describe('Layout header functionalities', () => {
 	});
 
 	test('GitHub link functions correctly', async ({ page }) => {
-		await page.goto('/');
+		const pagePromise = page.context().waitForEvent('page');
 		const githubLink = page.getByRole('link', { name: 'GitHub' });
 		await expect(githubLink).toBeVisible();
 		await githubLink.click();
-		await expect(page).toHaveURL('https://github.com/phamduylong/AliasWebBased');
+		const newPage = await pagePromise;
+		await expect(newPage).toHaveURL('https://github.com/phamduylong/AliasWebBased');
 	});
 
 	test('Clicking on logo text should redirect to home page', async ({ page }) => {

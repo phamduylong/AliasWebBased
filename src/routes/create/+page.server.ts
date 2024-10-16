@@ -1,7 +1,6 @@
 import { error } from '@sveltejs/kit';
-import { uid } from '$lib/helpers/common';
+import { uid, validateGame } from '$lib/helpers/common';
 import type { Game, Word } from '$lib/types';
-import { validateGame } from '$lib/helpers/common';
 export const actions = {
 	default: async ({ locals, request }) => {
 		const gameId: string = uid();
@@ -32,7 +31,6 @@ export const actions = {
 			throw error(400, errors.join(', '));
 		}
 		const gamesCollection = locals.pocketBase.collection('games');
-		// @ts-ignore
 		const createdGame = await gamesCollection.create<Game>(newGame);
 
 		return { success: true, gameId: createdGame.game_id };

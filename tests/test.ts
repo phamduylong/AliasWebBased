@@ -207,7 +207,6 @@ test.describe('Create game page', () => {
 });
 
 test.describe('Game page', () => {
-	
 	let gameForTesting : Game;
 	test.beforeAll(async () => {
 		const wordsRandString = fakerFI.word.words(100);
@@ -228,13 +227,19 @@ test.describe('Game page', () => {
 			is_team1_turn: true,
 			turn_started: false
 		};
-		try {
-			const gamesCollection = pocketBase.collection('games');
-			gameForTesting = await gamesCollection.create<Game>(newGame);
-		} catch (e) {
-			console.error(e);
+
+		const gamesCollection = pocketBase.collection('games');
+		gameForTesting = await gamesCollection.create<Game>(newGame);
+		if(gameForTesting) {
+			console.info(`Game created for testing: \n${JSON.stringify(gameForTesting, null, 2)}`);
 		}
 	});	
+
+	test.afterAll(async () => {
+		const gamesCollection = pocketBase.collection('games');
+		await gamesCollection.delete(gameForTesting.id);
+		console.info(`Cleaned up game after testing`);
+	});
 
 	test.beforeEach(async ({ page }) => {
 		await page.goto(`/game?gameId=${gameForTesting.game_id}`);
@@ -242,13 +247,20 @@ test.describe('Game page', () => {
 
 	test('Game page should have elements visible' , async function ({ page }) {
 		await expect(page).toHaveURL(`/game?gameId=${gameForTesting.game_id}`);
-		// FIXME: popup and normal banner have the same text, set ARIA roles for all elements
-		// await expect(page.getByText(`Team ${gameForTesting.team1}: ${gameForTesting.team1_score}`)).toBeVisible();
-		// await expect(page.getByText(`Team ${gameForTesting.team2}: ${gameForTesting.team2_score}`)).toBeVisible();
+		await expect(page.getByRole('status')).toBeVisible();
 		await expect(page.getByRole('button', { name: 'End game' })).toBeVisible();
 		await expect(page.getByRole('heading', { name: `Team ${gameForTesting.team1}` })).toBeVisible();
 		await expect(page.getByText(`Current score: ${gameForTesting.team1_score}`)).toBeVisible();
 		await expect(page.getByRole('button', { name: 'Start turn' })).toBeVisible();
 	});
 
+	test('Responsive UI', async ({ page }) => {
+		await page.setViewportSize({
+			width: 640,
+			height: 480,
+		});
+		await expect(page.getByRole('status')).not.toBeVisible();
+		await page.getByRole('button', { name: 'Scores' }).click();
+		await expect(page.getByRole('dialog')).toBeVisible();
+	});
 });

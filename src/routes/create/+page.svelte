@@ -85,7 +85,12 @@
 		});
 	};
 
-	const fetchDefaultWords = async () => {
+	/**
+	 * @summary Fetch the default words from the server.
+	 * @async
+	 * @returns {Promise<void>}
+	 */
+	const fetchDefaultWords = async (): Promise<void> => {
 		// TODO: think of a better way to do this, maybe having the file URL customizable so that modifications are easier
 		await fetch('/words_version6.csv')
 			.then((res) => res.blob())
@@ -116,7 +121,7 @@
 		{$t('create_page.copy_and_share_url')}
 	</h3>
 	<div
-		class="w-4/5 md:w-1/2 relative top-[15%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-token card variant-soft p-4 flex items-center gap-4"
+		class="w-4/5 md:w-1/2 relative top-[15%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-token card variant-soft p-4 flex items-center gap-4" role="main"
 	>
 		<input
 			title="Game URL"
@@ -145,6 +150,7 @@
 	<a
 		href="/game?gameId={form.gameId}"
 		class="btn variant-filled relative left-1/2 -translate-x-1/2 top-[25%]"
+		role="button"
 	>
 		<span class="font-bold">{$t('create_page.go_to_game')}</span>
 		<span><ArrowRightCircle /></span>

@@ -1,4 +1,19 @@
 import { expect, test } from '@playwright/test';
+import { fakerFI, fakerSV } from '@faker-js/faker';
+import { uid } from '../src/lib/helpers/common';
+import PocketBase from 'pocketbase';
+import dotenv from 'dotenv';
+import type { Game, Word } from '../src/lib/types';
+
+// Read from ".env" file.
+dotenv.config();
+const PUBLIC_POCKETBASE_URL = process.env.PUBLIC_POCKETBASE_URL;
+let pocketBase = new PocketBase(PUBLIC_POCKETBASE_URL);
+
+// Just to be sure
+test.beforeAll(() => {
+	pocketBase = new PocketBase(PUBLIC_POCKETBASE_URL);
+});
 
 test.describe('Layout header functionalities', () => {
 	test.beforeEach(async ({ page }) => {
@@ -126,7 +141,6 @@ test.describe('Index page', () => {
 });
 
 test.describe('Create game page', () => {
-
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/create');
 	});
@@ -153,13 +167,19 @@ test.describe('Create game page', () => {
 		await expect(wordFileInput).toBeVisible();
 		await expect(wordFileInput).toBeEditable();
 		await expect(wordFileInput).toHaveAttribute('type', 'file');
-		
+
 		await expect(page.getByRole('button', { name: 'Create game' })).toBeVisible();
 	});
 
 	test('Intermediate page UI to be visible', async ({ page }) => {
-		await page.fill('input[placeholder="Name of team 1 (max 16 characters)"]', 'Clippers');
-		await page.fill('input[placeholder="Name of team 2 (max 16 characters)"]', 'Lakers');
+		await page.fill(
+			'input[placeholder="Name of team 1 (max 16 characters)"]',
+			fakerFI.person.firstName()
+		);
+		await page.fill(
+			'input[placeholder="Name of team 2 (max 16 characters)"]',
+			fakerFI.person.firstName()
+		);
 		const useDefaultWordsSwitch = page.getByRole('switch', { name: 'Use default set of words' });
 		await useDefaultWordsSwitch.click();
 		const createGameButton = page.getByRole('button', { name: 'Create game' });
@@ -167,19 +187,29 @@ test.describe('Create game page', () => {
 		await createGameButton.click();
 
 		await expect(page.getByRole('heading', { name: 'Copy game URL' })).toBeVisible();
-		await expect(page.getByRole('heading', { name: 'Copy and share the game URL to play with friends' })).toBeVisible();
+		await expect(
+			page.getByRole('heading', { name: 'Copy and share the game URL to play with friends' })
+		).toBeVisible();
 		const gameCodeInput = page.getByRole('textbox');
 		await expect(gameCodeInput).toBeVisible();
 		await expect(gameCodeInput).toHaveAttribute('readonly');
 		await expect(gameCodeInput).toHaveAttribute('type', 'text');
-		expect(await gameCodeInput.inputValue()).toContain(`${new URL(page.url()).origin}/game?gameId=`);
+		expect(await gameCodeInput.inputValue()).toContain(
+			`${new URL(page.url()).origin}/game?gameId=`
+		);
 		await expect(page.getByRole('button', { name: 'Copy' })).toBeVisible();
 		await expect(page.getByText('Go to game')).toBeVisible();
 	});
 
 	test('Go to game button should redirect to game page', async ({ page }) => {
-		await page.fill('input[placeholder="Name of team 1 (max 16 characters)"]', 'Clippers');
-		await page.fill('input[placeholder="Name of team 2 (max 16 characters)"]', 'Lakers');
+		await page.fill(
+			'input[placeholder="Name of team 1 (max 16 characters)"]',
+			fakerSV.person.firstName()
+		);
+		await page.fill(
+			'input[placeholder="Name of team 2 (max 16 characters)"]',
+			fakerSV.person.firstName()
+		);
 		const useDefaultWordsSwitch = page.getByRole('switch', { name: 'Use default set of words' });
 		await useDefaultWordsSwitch.click();
 		const createGameButton = page.getByRole('button', { name: 'Create game' });
@@ -189,5 +219,64 @@ test.describe('Create game page', () => {
 		await page.locator('text=Go to game').click();
 		await page.waitForURL('**/game?gameId=**');
 		expect(page.url()).toContain('/game?gameId=');
+	});
+});
+
+test.describe('Game page', () => {
+	let gameForTesting: Game;
+	test.beforeAll(async () => {
+		const wordsRandString = fakerFI.word.words(100);
+		const wordsArr: Word[] = [];
+		for (const element of wordsRandString.split(' ')) {
+			if (element !== '') {
+				wordsArr.push({ word: element, shown: false });
+			}
+		}
+		const newGame: Game = {
+			id: '',
+			game_id: uid(),
+			team1: fakerFI.person.firstName(),
+			team2: fakerSV.person.firstName(),
+			team1_score: 0,
+			team2_score: 0,
+			words: wordsArr,
+			is_team1_turn: true,
+			turn_started: false
+		};
+
+		const gamesCollection = pocketBase.collection('games');
+		gameForTesting = await gamesCollection.create<Game>(newGame);
+		if (gameForTesting) {
+			console.info(`Game created for testing: \n${JSON.stringify(gameForTesting, null, 2)}`);
+		}
+	});
+
+	test.afterAll(async () => {
+		const gamesCollection = pocketBase.collection('games');
+		await gamesCollection.delete(gameForTesting.id);
+		console.info(`Cleaned up game after testing`);
+	});
+
+	test.beforeEach(async ({ page }) => {
+		await page.goto(`/game?gameId=${gameForTesting.game_id}`);
+	});
+
+	test('Game page should have elements visible', async function ({ page }) {
+		await expect(page).toHaveURL(`/game?gameId=${gameForTesting.game_id}`);
+		await expect(page.getByRole('status')).toBeVisible();
+		await expect(page.getByRole('button', { name: 'End game' })).toBeVisible();
+		await expect(page.getByRole('heading', { name: `Team ${gameForTesting.team1}` })).toBeVisible();
+		await expect(page.getByText(`Current score: ${gameForTesting.team1_score}`)).toBeVisible();
+		await expect(page.getByRole('button', { name: 'Start turn' })).toBeVisible();
+	});
+
+	test('Responsive UI', async ({ page }) => {
+		await page.setViewportSize({
+			width: 640,
+			height: 480
+		});
+		await expect(page.getByRole('status')).not.toBeVisible();
+		await page.getByRole('button', { name: 'Scores' }).click();
+		await expect(page.getByRole('dialog')).toBeVisible();
 	});
 });

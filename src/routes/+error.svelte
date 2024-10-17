@@ -24,7 +24,7 @@
 	<title>{$t('error_page.an_error_occurred')} D:</title>
 </svelte:head>
 
-<div class="select-none p-10">
+<div class="select-none p-10" role="main">
 	<h1 class="h1 my-10">
 		{emotes[Math.floor(Math.random() * emotes.length)]}
 		{$t('error_page.something_wrong_happened')}...

@@ -14,7 +14,7 @@
 	let currWord: Word = data.words[0];
 	let gameStarted: boolean = false;
 	let timer: number = 60;
-	let gameClockTimerInterval: number;
+	let gameClockTimerInterval: NodeJS.Timeout;
 
 	// Singleton stores
 	const toastStore = getToastStore();
@@ -253,8 +253,9 @@
 			meter={meter()}
 			track={track()}
 			strokeLinecap="round"
-			value={(timer / 60) * 100}>{timer}</ProgressRadial
-			font={80}
+			value={(timer / 60) * 100}
+			role="timer"
+			font={80}>{timer}</ProgressRadial
 		>
 		<h1 class="h1 my-2 md:my-5 text-center flex justify-center items-center flex-col p-5 font-bold">
 			{currWord ? currWord.word : ''}

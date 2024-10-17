@@ -121,7 +121,8 @@
 		{$t('create_page.copy_and_share_url')}
 	</h3>
 	<div
-		class="w-4/5 md:w-1/2 relative top-[15%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-token card variant-soft p-4 flex items-center gap-4" role="main"
+		class="w-4/5 md:w-1/2 relative top-[15%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-token card variant-soft p-4 flex items-center gap-4"
+		role="main"
 	>
 		<input
 			title="Game URL"

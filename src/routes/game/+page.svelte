@@ -213,7 +213,11 @@
 	>
 
 	<!-- Score Popup Data (sm) -->
-	<div class="md:collapse card card-hover variant-soft-secondary p-2" role="dialog" data-popup="scorePopUp">
+	<div
+		class="md:collapse card card-hover variant-soft-secondary p-2"
+		role="dialog"
+		data-popup="scorePopUp"
+	>
 		<span class="w-1/2 min-w-fit max-w-1/2 text-center mx-2 font-bold"
 			>{$t('game_page.team')} {data.team1}: {data.team1_score}</span
 		>|<span class="w-1/2 min-w-fit max-w-1/2 text-center mx-2 font-bold"

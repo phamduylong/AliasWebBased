@@ -25,7 +25,7 @@
 </script>
 
 {#if $modalStore[0]}
-	<div class="card rounded-xl">
+	<div class="card rounded-xl" role="dialog">
 		<div class="w-full flex justify-between">
 			<h3 class="h3 my-2 mx-4">{$t('result_modal.game_result')}: {result}</h3>
 			<button class="my-2 mx-4" on:click={() => modalStore.clear()}><CircleX /></button>

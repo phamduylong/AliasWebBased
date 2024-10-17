@@ -14,13 +14,19 @@
 	let currWord: Word = data.words[0];
 	let gameStarted: boolean = false;
 	let timer: number = 60;
-	let gameClockTimerInterval: number;
+	let gameClockTimerInterval: NodeJS.Timeout;
 
 	// Singleton stores
 	const toastStore = getToastStore();
 	const modalStore = getModalStore();
 
 	// REGION: Functions
+	/**
+	 * Get the next word from the list and process scores
+	 * @param guessed
+	 * @async
+	 * @returns void
+	 */
 	const nextWord: Function = async (guessed: boolean = false): Promise<void> => {
 		// current word was guessed
 		if (guessed) {
@@ -58,6 +64,11 @@
 		}
 	};
 
+	/**
+	 * Start the turn and set the timer
+	 * @async
+	 * @returns void
+	 */
 	const startTurn = async () => {
 		if (!data.words || data.words.length === 0) {
 			const toast = {
@@ -111,6 +122,12 @@
 		});
 	};
 
+	/**
+	 * End the game and show the results through a modal
+	 * @async
+	 * @see src/lib/components/ResultModal.svelte
+	 * @returns void
+	 */
 	const endGame: Function = async (): Promise<void> => {
 		gameStarted = false;
 		data.turn_started = false;
@@ -196,10 +213,14 @@
 	>
 
 	<!-- Score Popup Data (sm) -->
-	<div class="card card-hover variant-soft-secondary p-2" data-popup="scorePopUp">
-		<span class="w-1/2 min-w-fit max-w-1/2 text-center mx-2"
+	<div
+		class="md:collapse card card-hover variant-soft-secondary p-2"
+		role="dialog"
+		data-popup="scorePopUp"
+	>
+		<span class="w-1/2 min-w-fit max-w-1/2 text-center mx-2 font-bold"
 			>{$t('game_page.team')} {data.team1}: {data.team1_score}</span
-		>|<span class="w-1/2 min-w-fit max-w-1/2 text-center mx-2"
+		>|<span class="w-1/2 min-w-fit max-w-1/2 text-center mx-2 font-bold"
 			>{$t('game_page.team')} {data.team2}: {data.team2_score}</span
 		>
 	</div>
@@ -207,11 +228,12 @@
 	<!-- Score Banner (lg - xl) -->
 	<div
 		class="collapse md:visible card card-hover variant-soft-secondary md:w-80 lg:w-96 min-w-fit relative left-1/2 -translate-x-1/2 flex justify-center select-none py-2 m-4 divide-x-2"
+		role="status"
 	>
-		<span class="w-1/2 flex text-center justify-center items-center px-2"
+		<span class="w-1/2 flex text-center justify-center items-center px-2 font-bold"
 			>{$t('game_page.team')} {data.team1}: {data.team1_score}</span
 		>
-		<span class="w-1/2 flex text-center justify-center items-center px-2"
+		<span class="w-1/2 flex text-center justify-center items-center px-2 font-bold"
 			>{$t('game_page.team')} {data.team2}: {data.team2_score}</span
 		>
 	</div>
@@ -247,13 +269,14 @@
 	<h3 class="h3 mt-5 md:mt-20 flex justify-center items-center flex-col p-5 font-bold">
 		{$t('game_page.current_score')}: {data.is_team1_turn ? data.team1_score : data.team2_score}
 	</h3>
-	<div class="my-2 md:my-5 flex justify-center items-center flex-col">
+	<div class="my-2 md:my-5 flex justify-center items-center flex-col" role="main">
 		<ProgressRadial
 			class="my-2 md:my-5 select-none"
 			meter={meter()}
 			track={track()}
 			strokeLinecap="round"
-			value={(timer / 60) * 100}>{timer}</ProgressRadial
+			value={(timer / 60) * 100}
+			role="timer">{timer}</ProgressRadial
 		>
 		<h1 class="h1 my-2 md:my-5 text-center flex justify-center items-center flex-col p-5 font-bold">
 			{currWord ? currWord.word : ''}

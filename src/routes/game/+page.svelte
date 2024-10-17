@@ -254,6 +254,7 @@
 			track={track()}
 			strokeLinecap="round"
 			value={(timer / 60) * 100}>{timer}</ProgressRadial
+			font={80}
 		>
 		<h1 class="h1 my-2 md:my-5 text-center flex justify-center items-center flex-col p-5 font-bold">
 			{currWord ? currWord.word : ''}
